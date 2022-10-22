@@ -7,7 +7,7 @@ VVP_POST=-fst
 VIVADO=vivado -mode batch -source
 
 
-CONWAY_SRCS=hdl/conway_cell.sv hdl/adder_1.sv hdl/adder_n.sv
+CONWAY_SRCS=hdl/conway_cell.sv hdl/adder_1.sv hdl/adder_n.sv hdl/count_neighbors.sv hdl/comparator.sv
 DECODER_SRCS=hdl/decoder*.sv
 LED_ARRAY_SRCS=${DECODER_SRCS} hdl/led_array_driver.sv
 MAIN_SRCS=${CONWAY_SRCS} ${LED_ARRAY_SRCS} hdl/main.sv 
@@ -23,6 +23,15 @@ test_decoder_2_4: tests/test_decoder_2_4.sv hdl/*.sv
 
 test_decoders: tests/test_decoders.sv ${DECODER_SRCS}
 	${IVERILOG} $^ -o test_decoders.bin && ${VVP} test_decoders.bin ${VVP_POST}
+
+test_adder_1: tests/test_adder_1.sv ${CONWAY_SRCS}
+	${IVERILOG} $^ -o test_adder_1.bin && ${VVP} test_adder_1.bin ${VVP_POST}
+
+test_count_neighbors: tests/test_count_neighbors.sv ${CONWAY_SRCS}
+	${IVERILOG} $^ -o test_count_neighbors.bin && ${VVP} test_count_neighbors.bin ${VVP_POST}
+
+test_comparator: tests/test_comparator.sv hdl/comparator.sv
+	${IVERILOG} $^ -o test_comparator.bin && ${VVP} test_comparator.bin ${VVP_POST}
 
 test_conway_cell: tests/test_conway_cell.sv ${CONWAY_SRCS}
 	${IVERILOG} $^ -o test_conway_cell.bin && ${VVP} test_conway_cell.bin ${VVP_POST}

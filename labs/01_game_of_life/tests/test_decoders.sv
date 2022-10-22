@@ -29,6 +29,6 @@ module test_decoders;
     end
         
     $finish;      
-	end
+  end
 
 endmodule

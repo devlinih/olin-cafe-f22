@@ -1,29 +1,22 @@
 `timescale 1ns/1ps
+
+// See docs/notebook-sketches.pdf (page 1) for original truth table and sum of
+// products
+
 module decoder_2_to_4(ena, in, out);
 
-input wire ena;
-input wire [1:0] in;
-output logic [3:0] out;
+   input wire         ena;
+   input wire [1:0]   in;
+   output logic [3:0] out;
 
-wire ena0, ena1;
-// wire [1:0] decoder_enables;
-
-decoder_1_to_2 DEC0(
-  .ena(ena0),
-  .in(in[0]),
-  .out(out[1:0])
-);
-
-decoder_1_to_2 DEC1(
-  .ena(ena1),
-  .in(in[0]),
-  .out(out[3:2])
-);
-
-decoder_1_to_2 DEC_ENA(
-  .ena(ena),
-  .in(in[1]),
-  .out({ena1, ena0})
-);
+   logic [1:0] in_b;
+   always_comb begin
+      // Implement truth table
+      in_b = ~in;
+      out[0] = in_b[0] & in_b[1] & ena;
+      out[1] = in[0] & in_b[1] & ena;
+      out[2] = in_b[0] & in[1] & ena;
+      out[3] = in[0] & in[1] & ena;
+   end
 
 endmodule
