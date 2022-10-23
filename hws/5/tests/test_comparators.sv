@@ -65,6 +65,56 @@ module test_comparators;
 
       // Add more interesting tests here!
 
+      // Super basic cases
+      a = 0; // All zeros
+      b = 0;
+      #1 print_io();
+
+      a = -1; // All ones
+      b = -1;
+      #1 print_io();
+
+      a = 8; // Positive numbers, a == b
+      b = 8;
+      #1 print_io();
+
+      a = 8; // Positive numbers, a > b
+      b = 7;
+      #1 print_io();
+
+      a = 8; // Positive numbers, a < b
+      b = 9;
+      #1 print_io();
+
+      a = -8; // Negative numbers, a == b
+      b = -8;
+      #1 print_io();
+
+      a = -8; // Negative numbers, a > b
+      b = -9;
+      #1 print_io();
+
+      a = -8; // Negative numbers, a < b
+      b = -7;
+      #1 print_io();
+
+      a = 5; // a is positive, b is negative
+      b = -5;
+      #1 print_io();
+
+      a = -5; // a is negative, b is positive
+      b = 5;
+      #1 print_io();
+
+      // Overflow cases
+      a = {1'b0, {31 {1'b1}}}; // Max positive value for 32 bit signed int
+      b = -7;                  // Any negative number here should cause an overflow
+      #1 print_io();
+
+      a = {1'b1, {31 {1'b0}}}; // Smallest negative value for 32 bit signed int
+      b = 7;                   // Any positive number here should cause an overflow
+      #1 print_io();
+
 
       // Random Tests
       $display("Random testing.");
