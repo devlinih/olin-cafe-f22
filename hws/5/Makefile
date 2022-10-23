@@ -19,6 +19,9 @@ waves_comparator: test_comparators
 test_pulse_generator: tests/test_pulse_generator.sv hdl/pulse_generator.sv
 	${IVERILOG} $^ -o test_pulse_generator.bin && ${VVP} test_pulse_generator.bin ${VVP_POST}
 
+waves_pulse_generator: test_pulse_generator
+	gtkwave pulse_generator.fst --save=wave_cfgs/pulse_generator.gtkw
+
 test_triangle_generator: tests/test_triangle_generator.sv hdl/triangle_generator.sv
 	${IVERILOG} $^ -o test_triangle_generator.bin && ${VVP} test_triangle_generator.bin ${VVP_POST}
 
