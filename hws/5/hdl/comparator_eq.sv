@@ -1,13 +1,8 @@
 module comparator_eq(a, b, out);
-parameter N = 32;
-input wire signed [N-1:0] a, b;
-output logic out;
+   parameter N = 32;
 
-// Using only *structural* combinational logic, make a module that computes if a == b. 
+   input wire signed [N-1:0] a, b;
+   output logic              out;
 
-// Copy any other modules you use into the HDL folder and update the Makefile accordingly.
-
-
+   always_comb out = &(~(a ^ b));
 endmodule
-
-
