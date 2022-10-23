@@ -25,6 +25,9 @@ waves_pulse_generator: test_pulse_generator
 test_triangle_generator: tests/test_triangle_generator.sv hdl/triangle_generator.sv
 	${IVERILOG} $^ -o test_triangle_generator.bin && ${VVP} test_triangle_generator.bin ${VVP_POST}
 
+waves_triangle_generator: test_triangle_generator
+	gtkwave triangle_generator.fst --save=wave_cfgs/triangle_generator.gtkw
+
 test_pwm: tests/test_pwm.sv hdl/pulse_generator.sv hdl/pwm.sv
 	@echo "This might take a while, we're testing a lot of clock cycles..."
 	${IVERILOG} $^ -o test_pwm.bin && ${VVP} test_pwm.bin ${VVP_POST}

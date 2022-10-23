@@ -27,8 +27,9 @@ module triangle_generator(clk, rst, ena, out);
 
          // Next direction
          case(out)
-           // -2 is 111...110 by two's comp definition
-           -2: next_state = COUNTING_DOWN;
+           // 111..110
+           {{N-1{1'b1}}, 1'b0}: next_state = COUNTING_DOWN;
+           // 000..001
            1:  next_state = COUNTING_UP;
            default: next_state = state;
          endcase
