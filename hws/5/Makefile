@@ -23,10 +23,13 @@ test_pwm: tests/test_pwm.sv hdl/pulse_generator.sv hdl/pwm.sv
 	@echo "This might take a while, we're testing a lot of clock cycles..."
 	${IVERILOG} $^ -o test_pwm.bin && ${VVP} test_pwm.bin ${VVP_POST}
 
+homework_pdf: README.md
+	pandoc $^ -o Homework5.pdf
+
 # Call this to clean up all your generated files
 clean:
 	rm -f *.bin *.fst vivado*.log *.jou vivado*.str *.log *.checkpoint *.bit *.html *.xml
 
 # Call this to generate your submission zip file.
-submission: clean
+submission: clean homework_pdf
 	zip submission.zip Makefile hdl/*.sv tests/*.sv *.md *.pdf wave_cfgs/*.gtkw
