@@ -22,7 +22,7 @@ module pwm(clk, rst, ena, step, duty, out);
    end
 
    always_comb begin
-      out = ena ? (counter < duty) | (duty == -1)
+      out = ena ? (counter < duty) | (duty == {N {1'b1}})
                 : 1'b0;
    end
 endmodule

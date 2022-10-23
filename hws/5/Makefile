@@ -32,6 +32,9 @@ test_pwm: tests/test_pwm.sv hdl/pulse_generator.sv hdl/pwm.sv
 	@echo "This might take a while, we're testing a lot of clock cycles..."
 	${IVERILOG} $^ -o test_pwm.bin && ${VVP} test_pwm.bin ${VVP_POST}
 
+waves_pwm: test_pwm
+	gtkwave pwm.fst --save=wave_cfgs/pwm.gtkw
+
 homework_pdf: README.md schematics/Schematics.xopp
 	${PANDOC} README.md -o Questions.pdf
 	${XOURNAL} schematics/Schematics.xopp -p schematics/Schematics.pdf
