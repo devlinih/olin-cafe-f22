@@ -4,6 +4,9 @@ IVERILOG=iverilog -Wall -Wno-sensitivity-entire-vector -Wno-sensitivity-entire-a
 VVP=vvp
 VVP_POST=-fst
 .PHONY: clean submission
+PANDOC=pandoc
+XOURNAL=xournalpp
+PDFUNITE=pdfunite
 
 ADDER_SOURCES=hdl/adder_1.sv hdl/adder_n.sv
 
@@ -23,12 +26,15 @@ test_pwm: tests/test_pwm.sv hdl/pulse_generator.sv hdl/pwm.sv
 	@echo "This might take a while, we're testing a lot of clock cycles..."
 	${IVERILOG} $^ -o test_pwm.bin && ${VVP} test_pwm.bin ${VVP_POST}
 
-homework_pdf: README.md
-	pandoc $^ -o Homework5.pdf
+homework_pdf: README.md schematics/Schematics.xopp
+	${PANDOC} README.md -o Questions.pdf
+	${XOURNAL} schematics/Schematics.xopp -p schematics/Schematics.pdf
+	${PDFUNITE} Questions.pdf schematics/Schematics.pdf Homework5.pdf
+	rm Questions.pdf
 
 # Call this to clean up all your generated files
 clean:
-	rm -f *.bin *.fst vivado*.log *.jou vivado*.str *.log *.checkpoint *.bit *.html *.xml
+	rm -f *.bin *.fst vivado*.log *.jou vivado*.str *.log *.checkpoint *.bit *.html *.xml schematics/Schematics.pdf
 
 # Call this to generate your submission zip file.
 submission: clean homework_pdf
