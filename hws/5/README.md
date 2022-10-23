@@ -52,9 +52,3 @@ e) How are the generalizations from this paper still applicable half a century
    I think what is still definitely useful though is how 7 is the typical
    amount of discrete points we can distinguish. It makes sense to keep using 7
    point scales and well, not ask silly 0 to 100 questions.
-
-# Combinational Review: ALU Part Two
-
-# Design Challenge/Lab Prep
-
-# Tool Usage---gtkwave/Makefile practice
