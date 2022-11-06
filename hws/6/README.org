@@ -26,3 +26,32 @@ A MTBF of 200 years seems acceptable.
 In this case, people's lives are obviously in danger if there is a failure. The probability of failure should at least be as low as the probability of a human driver having a failure.
 
 600 years.
+
+** (b) Case Study: Toy Piano
+
+Using the somewhat arbitrary MTBF determined earlier of 1 year, run the sweep script:
+
+#+begin_example
+  python metastability_mtbf.py
+  f_c = 1.000000e+08 Hz, p(f) = 1.075701e-25, MTBF_system = 294782611197502144.0 years
+  f_c = 1.291550e+08 Hz, p(f) = 5.557275e-20, MTBF_system = 570599641697.5 years
+  f_c = 1.668101e+08 Hz, p(f) = 1.561148e-15, MTBF_system = 20311844.1 years
+  f_c = 2.154435e+08 Hz, p(f) = 4.601521e-12, MTBF_system =   6891.2 years
+  f_c = 2.782559e+08 Hz, p(f) = 2.367326e-09, MTBF_system =     13.4 years
+  f_c = 3.593814e+08 Hz, p(f) = 3.152426e-07, MTBF_system =      0.1 years
+  f_c = 4.641589e+08 Hz, p(f) = 1.474220e-05, MTBF_system =      0.0 years
+  f_c = 5.994843e+08 Hz, p(f) = 3.066200e-04, MTBF_system =      0.0 years
+  f_c = 7.742637e+08 Hz, p(f) = 3.405583e-03, MTBF_system =      0.0 years
+  f_c = 1.000000e+09 Hz, p(f) = 2.327214e-02, MTBF_system =      0.0 years
+#+end_example
+
+The MTBF of 1 year must have a clock between 278 MHz and 359 MHz.
+
+I keep modifying the script to narrow the range. Eventually, it is found that a clock of around 315MHz gives a MTBF of 1 year.
+
+#+begin_example
+f_c = 3.159683e+08 Hz, p(f) = 3.118515e-08, MTBF_system =      1.0 years
+f_c = 3.169714e+08 Hz, p(f) = 3.312694e-08, MTBF_system =      1.0 years
+#+end_example
+
+This is an insanely overkill clock rate for a toy piano. It could easily be lowered and have a much lower MTBF. (perhaps my MTBF was set too low then). However, I think a better approach for this problem would be to work out how low the synchronizer clock can be without anyone noting input delay. Then the MTBF would be plenty safe.

@@ -17,7 +17,7 @@ def probability_of_failure(
 
 if __name__ == "__main__":
     N = 24.0
-    for f_c in np.logspace(8, 9, 10):  
+    for f_c in np.logspace(np.log10(3.11e8), np.log10(3.20e8), 10):  
         p_f_individual = probability_of_failure(f_c = f_c)
         p_f_system = N*p_f_individual
         MTBF_individual = 1/p_f_individual
