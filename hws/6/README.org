@@ -1,0 +1,28 @@
+#+author: Devlin Ih
+#+date: 2022-11-14
+#+title: Homework 6
+#+options: toc:nil num:nil
+
+* 1 Metastability and Designing for Failure
+
+** (a) Reasonable MTBFs
+
+*** Toy Piano
+
+The MTBF for a toy piano does not need to be that robust. If there is a failure, no one is placed in any immediate danger. If a failure were to occur, restarting the system is as simple as turning it off and back on again.
+
+However, these things obviously can't be failing left and right or else it would be rather annoying to play one.
+
+Due to this, I would suggest 1 year being an acceptable MTBF (66% of units will have failed within that time, but it takes 2 seconds to turn it off and back on again and it is not safety critical).
+
+*** Industrial Robotic Arm
+
+Let's start by asking the question: can someone get hurt if there is a failure (for example, how likely is it that there will be a worker in the work envelope of the robot). Second, down time will also cost a lot of time (hence money) for where this robot is used. Rebooting an industrial robot is not as simple and fast as the toy piano.
+
+A MTBF of 200 years seems acceptable.
+
+*** Vehicle ADAS (Automated Driver Assistance System)
+
+In this case, people's lives are obviously in danger if there is a failure. The probability of failure should at least be as low as the probability of a human driver having a failure.
+
+600 years.
