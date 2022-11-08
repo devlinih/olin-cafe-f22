@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.113 (w)1999-2022 BSI
-[*] Tue Nov  8 23:17:49 2022
+[*] Tue Nov  8 23:47:28 2022
 [*]
 [dumpfile] "/Documents/Documents/Programs/olin-cafe-f22/hws/6/register_file.fst"
-[dumpfile_mtime] "Tue Nov  8 23:00:26 2022"
-[dumpfile_size] 7465
+[dumpfile_mtime] "Tue Nov  8 23:44:28 2022"
+[dumpfile_size] 7501
 [savefile] "/Documents/Documents/Programs/olin-cafe-f22/hws/6/wave_cfgs/register_file.gtkw"
-[timestart] 81700
+[timestart] 0
 [size] 1884 980
 [pos] -956 -1
-*-16.500000 315000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-15.600000 190000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test_register_file.
 [treeopen] test_register_file.UUT.
 [treeopen] test_register_file.UUT.genblk1[10].
@@ -63,7 +63,6 @@ test_register_file.UUT.wr_addr[4:0]
 test_register_file.UUT.wr_data[31:0]
 @28
 test_register_file.UUT.wr_ena
-@22
 test_register_file.UUT.register_ena[31:0]
 @200
 -Register Values
@@ -76,7 +75,7 @@ test_register_file.UUT.register_ena[31:0]
 +{X29} test_register_file.UUT.genblk1[29].REGISTER.q[31:0]
 +{X28} test_register_file.UUT.genblk1[28].REGISTER.q[31:0]
 +{X27} test_register_file.UUT.genblk1[27].REGISTER.q[31:0]
-+{X26} test_register_file.UUT.genblk1[27].REGISTER.q[31:0]
++{X26} test_register_file.UUT.genblk1[26].REGISTER.q[31:0]
 +{X25} test_register_file.UUT.genblk1[25].REGISTER.q[31:0]
 +{X24} test_register_file.UUT.genblk1[24].REGISTER.q[31:0]
 +{X23} test_register_file.UUT.genblk1[23].REGISTER.q[31:0]

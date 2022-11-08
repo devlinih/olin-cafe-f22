@@ -38,8 +38,8 @@ module decoder32(in, ena, out);
       out[27] = ena &  in[4] &  in[3] & ~in[2] &  in[1] &  in[0];
       out[28] = ena &  in[4] &  in[3] &  in[2] & ~in[1] & ~in[0];
       out[29] = ena &  in[4] &  in[3] &  in[2] & ~in[1] &  in[0];
-      out[31] = ena &  in[4] &  in[3] &  in[2] &  in[1] & ~in[0];
-      out[32] = ena &  in[4] &  in[3] &  in[2] &  in[1] &  in[0]; 
+      out[30] = ena &  in[4] &  in[3] &  in[2] &  in[1] & ~in[0];
+      out[31] = ena &  in[4] &  in[3] &  in[2] &  in[1] &  in[0];
   end
-   
+
 endmodule
