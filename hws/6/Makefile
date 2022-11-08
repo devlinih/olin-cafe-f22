@@ -15,13 +15,13 @@ test_alu: ${ALU_TEST_FILES} ${ALU_SRCS} tests/alu_testcases.memh
 waves_alu: test_alu
 		gtkwave alu.fst &
 
-RFILE_SRCS:=hdl/register.sv hdl/register_file.sv hdl/mux*.sv
+RFILE_SRCS:=hdl/register.sv hdl/register_file.sv hdl/mux*.sv hdl/decoder*.sv
 
 test_register_file: ${RFILE_SRCS} tests/test_register_file.sv
 	${IVERILOG} $^ -o test_register_file.bin && ${VVP} test_register_file.bin ${VVP_POST}
 
 waves_register_file: test_register_file
-	gtkwave register_file.fst
+	gtkwave register_file.fst --save=wave_cfgs/register_file.gtkw
 
 # Call this to clean up all your generated files
 clean:
@@ -29,4 +29,4 @@ clean:
 
 # Call this to generate your submission zip file.
 submission:
-	zip submission.zip Makefile *.sv *.pdf
+	zip submission.zip Makefile *.sv *.pdf wave_cfgs/*.gtkw
