@@ -1,0 +1,106 @@
+[*]
+[*] GTKWave Analyzer v3.3.113 (w)1999-2022 BSI
+[*] Tue Nov  8 23:17:49 2022
+[*]
+[dumpfile] "/Documents/Documents/Programs/olin-cafe-f22/hws/6/register_file.fst"
+[dumpfile_mtime] "Tue Nov  8 23:00:26 2022"
+[dumpfile_size] 7465
+[savefile] "/Documents/Documents/Programs/olin-cafe-f22/hws/6/wave_cfgs/register_file.gtkw"
+[timestart] 81700
+[size] 1884 980
+[pos] -956 -1
+*-16.500000 315000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] test_register_file.
+[treeopen] test_register_file.UUT.
+[treeopen] test_register_file.UUT.genblk1[10].
+[treeopen] test_register_file.UUT.genblk1[11].
+[treeopen] test_register_file.UUT.genblk1[12].
+[treeopen] test_register_file.UUT.genblk1[13].
+[treeopen] test_register_file.UUT.genblk1[14].
+[treeopen] test_register_file.UUT.genblk1[15].
+[treeopen] test_register_file.UUT.genblk1[16].
+[treeopen] test_register_file.UUT.genblk1[17].
+[treeopen] test_register_file.UUT.genblk1[18].
+[treeopen] test_register_file.UUT.genblk1[19].
+[treeopen] test_register_file.UUT.genblk1[1].
+[treeopen] test_register_file.UUT.genblk1[20].
+[treeopen] test_register_file.UUT.genblk1[21].
+[treeopen] test_register_file.UUT.genblk1[22].
+[treeopen] test_register_file.UUT.genblk1[23].
+[treeopen] test_register_file.UUT.genblk1[24].
+[treeopen] test_register_file.UUT.genblk1[25].
+[treeopen] test_register_file.UUT.genblk1[26].
+[treeopen] test_register_file.UUT.genblk1[27].
+[treeopen] test_register_file.UUT.genblk1[28].
+[treeopen] test_register_file.UUT.genblk1[29].
+[treeopen] test_register_file.UUT.genblk1[2].
+[treeopen] test_register_file.UUT.genblk1[30].
+[treeopen] test_register_file.UUT.genblk1[31].
+[treeopen] test_register_file.UUT.genblk1[3].
+[treeopen] test_register_file.UUT.genblk1[4].
+[treeopen] test_register_file.UUT.genblk1[5].
+[treeopen] test_register_file.UUT.genblk1[6].
+[treeopen] test_register_file.UUT.genblk1[7].
+[treeopen] test_register_file.UUT.genblk1[8].
+[treeopen] test_register_file.UUT.genblk1[9].
+[sst_width] 273
+[signals_width] 350
+[sst_expanded] 1
+[sst_vpaned_height] 289
+@28
+test_register_file.UUT.clk
+@200
+-Read Ports
+@22
+test_register_file.UUT.rd_addr0[4:0]
+test_register_file.UUT.rd_data0[31:0]
+test_register_file.UUT.rd_addr1[4:0]
+test_register_file.UUT.rd_data1[31:0]
+@200
+-Write Ports
+@22
+test_register_file.UUT.wr_addr[4:0]
+test_register_file.UUT.wr_data[31:0]
+@28
+test_register_file.UUT.wr_ena
+@22
+test_register_file.UUT.register_ena[31:0]
+@200
+-Register Values
+@800022
++{X31} #{test_register_file.UUT.genblk1[31].REGISTER.q[31:0]} (0)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (1)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (2)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (3)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (4)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (5)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (6)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (7)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (8)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (9)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (10)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (11)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (12)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (13)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (14)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (15)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (16)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (17)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (18)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (19)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (20)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (21)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (22)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (23)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (24)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (25)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (26)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (27)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (28)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (29)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (30)test_register_file.UUT.genblk1[31].REGISTER.q[31:0] (31)test_register_file.UUT.genblk1[31].REGISTER.q[31:0]
+@1001200
+-group_end
+@22
++{X30} test_register_file.UUT.genblk1[30].REGISTER.q[31:0]
++{X29} test_register_file.UUT.genblk1[29].REGISTER.q[31:0]
++{X28} test_register_file.UUT.genblk1[28].REGISTER.q[31:0]
++{X27} test_register_file.UUT.genblk1[27].REGISTER.q[31:0]
++{X26} test_register_file.UUT.genblk1[27].REGISTER.q[31:0]
++{X25} test_register_file.UUT.genblk1[25].REGISTER.q[31:0]
++{X24} test_register_file.UUT.genblk1[24].REGISTER.q[31:0]
++{X23} test_register_file.UUT.genblk1[23].REGISTER.q[31:0]
++{X22} test_register_file.UUT.genblk1[22].REGISTER.q[31:0]
++{X21} test_register_file.UUT.genblk1[21].REGISTER.q[31:0]
++{X20} test_register_file.UUT.genblk1[20].REGISTER.q[31:0]
++{X19} test_register_file.UUT.genblk1[19].REGISTER.q[31:0]
++{X18} test_register_file.UUT.genblk1[18].REGISTER.q[31:0]
++{X17} test_register_file.UUT.genblk1[17].REGISTER.q[31:0]
++{X16} test_register_file.UUT.genblk1[16].REGISTER.q[31:0]
++{X15} test_register_file.UUT.genblk1[15].REGISTER.q[31:0]
++{X14} test_register_file.UUT.genblk1[14].REGISTER.q[31:0]
++{X13} test_register_file.UUT.genblk1[13].REGISTER.q[31:0]
++{X12} test_register_file.UUT.genblk1[12].REGISTER.q[31:0]
++{X11} test_register_file.UUT.genblk1[11].REGISTER.q[31:0]
++{X10} test_register_file.UUT.genblk1[10].REGISTER.q[31:0]
++{X09} test_register_file.UUT.genblk1[9].REGISTER.q[31:0]
++{X08} test_register_file.UUT.genblk1[8].REGISTER.q[31:0]
++{X07} test_register_file.UUT.genblk1[7].REGISTER.q[31:0]
++{X06} test_register_file.UUT.genblk1[6].REGISTER.q[31:0]
++{X05} test_register_file.UUT.genblk1[5].REGISTER.q[31:0]
++{X04} test_register_file.UUT.genblk1[4].REGISTER.q[31:0]
++{X03} test_register_file.UUT.genblk1[3].REGISTER.q[31:0]
++{X02} test_register_file.UUT.genblk1[2].REGISTER.q[31:0]
++{X01} test_register_file.UUT.genblk1[1].REGISTER.q[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
