@@ -27,7 +27,7 @@ module shift_left_logical(in, shamt, out);
          // This is the power of Emacs
 
          /* mux32 AUTO_TEMPLATE (
-          .\(in*[^0-9]\)@ (in_ext[\2-i+N-1]),
+          .\(in*[^0-9]\)@ (in_ext[N-1+i-\2]),
           .select (shamt),
           .out (out[i]),
           );*/
@@ -35,38 +35,38 @@ module shift_left_logical(in, shamt, out);
                              // Outputs
                              .out               (out[i]),        // Templated
                              // Inputs
-                             .in00              (in_ext[00-i+N-1]), // Templated
-                             .in01              (in_ext[01-i+N-1]), // Templated
-                             .in02              (in_ext[02-i+N-1]), // Templated
-                             .in03              (in_ext[03-i+N-1]), // Templated
-                             .in04              (in_ext[04-i+N-1]), // Templated
-                             .in05              (in_ext[05-i+N-1]), // Templated
-                             .in06              (in_ext[06-i+N-1]), // Templated
-                             .in07              (in_ext[07-i+N-1]), // Templated
-                             .in08              (in_ext[08-i+N-1]), // Templated
-                             .in09              (in_ext[09-i+N-1]), // Templated
-                             .in10              (in_ext[10-i+N-1]), // Templated
-                             .in11              (in_ext[11-i+N-1]), // Templated
-                             .in12              (in_ext[12-i+N-1]), // Templated
-                             .in13              (in_ext[13-i+N-1]), // Templated
-                             .in14              (in_ext[14-i+N-1]), // Templated
-                             .in15              (in_ext[15-i+N-1]), // Templated
-                             .in16              (in_ext[16-i+N-1]), // Templated
-                             .in17              (in_ext[17-i+N-1]), // Templated
-                             .in18              (in_ext[18-i+N-1]), // Templated
-                             .in19              (in_ext[19-i+N-1]), // Templated
-                             .in20              (in_ext[20-i+N-1]), // Templated
-                             .in21              (in_ext[21-i+N-1]), // Templated
-                             .in22              (in_ext[22-i+N-1]), // Templated
-                             .in23              (in_ext[23-i+N-1]), // Templated
-                             .in24              (in_ext[24-i+N-1]), // Templated
-                             .in25              (in_ext[25-i+N-1]), // Templated
-                             .in26              (in_ext[26-i+N-1]), // Templated
-                             .in27              (in_ext[27-i+N-1]), // Templated
-                             .in28              (in_ext[28-i+N-1]), // Templated
-                             .in29              (in_ext[29-i+N-1]), // Templated
-                             .in30              (in_ext[30-i+N-1]), // Templated
-                             .in31              (in_ext[31-i+N-1]), // Templated
+                             .in00              (in_ext[N-1+i-00]), // Templated
+                             .in01              (in_ext[N-1+i-01]), // Templated
+                             .in02              (in_ext[N-1+i-02]), // Templated
+                             .in03              (in_ext[N-1+i-03]), // Templated
+                             .in04              (in_ext[N-1+i-04]), // Templated
+                             .in05              (in_ext[N-1+i-05]), // Templated
+                             .in06              (in_ext[N-1+i-06]), // Templated
+                             .in07              (in_ext[N-1+i-07]), // Templated
+                             .in08              (in_ext[N-1+i-08]), // Templated
+                             .in09              (in_ext[N-1+i-09]), // Templated
+                             .in10              (in_ext[N-1+i-10]), // Templated
+                             .in11              (in_ext[N-1+i-11]), // Templated
+                             .in12              (in_ext[N-1+i-12]), // Templated
+                             .in13              (in_ext[N-1+i-13]), // Templated
+                             .in14              (in_ext[N-1+i-14]), // Templated
+                             .in15              (in_ext[N-1+i-15]), // Templated
+                             .in16              (in_ext[N-1+i-16]), // Templated
+                             .in17              (in_ext[N-1+i-17]), // Templated
+                             .in18              (in_ext[N-1+i-18]), // Templated
+                             .in19              (in_ext[N-1+i-19]), // Templated
+                             .in20              (in_ext[N-1+i-20]), // Templated
+                             .in21              (in_ext[N-1+i-21]), // Templated
+                             .in22              (in_ext[N-1+i-22]), // Templated
+                             .in23              (in_ext[N-1+i-23]), // Templated
+                             .in24              (in_ext[N-1+i-24]), // Templated
+                             .in25              (in_ext[N-1+i-25]), // Templated
+                             .in26              (in_ext[N-1+i-26]), // Templated
+                             .in27              (in_ext[N-1+i-27]), // Templated
+                             .in28              (in_ext[N-1+i-28]), // Templated
+                             .in29              (in_ext[N-1+i-29]), // Templated
+                             .in30              (in_ext[N-1+i-30]), // Templated
+                             .in31              (in_ext[N-1+i-31]), // Templated
                              .select            (shamt));         // Templated
       end
    endgenerate
