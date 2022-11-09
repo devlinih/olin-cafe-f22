@@ -29,4 +29,4 @@ clean:
 
 # Call this to generate your submission zip file.
 submission:
-	zip submission.zip Makefile *.sv *.pdf wave_cfgs/*.gtkw
+	zip submission.zip Makefile hdl/*.sv tests/*.sv *.pdf wave_cfgs/*.gtkw
