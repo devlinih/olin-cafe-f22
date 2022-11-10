@@ -74,6 +74,21 @@ always_ff @(posedge clk) begin : spi_controller_fsm
   end else begin
     case(state)
       S_IDLE : begin
+        i_ready <= 1;
+        sclk <= 0;
+        if(i_valid) begin
+          tx_data <= i_data;
+          rx_data <= 0;
+          i_ready <= 0;
+          o_valid <= 0;
+          state <= S_TXING;
+          // Initialize our bit counter based on our spi mode. By initializing to a the terminal value and then counting down, we can get away with a single == comparator (instead of comparing to different values based on spi_mode)
+          case (spi_mode) 
+            WRITE_16 : bit_counter <= 5'd15;
+            WRITE_8 : bit_counter <= 5'd7;
+            default : bit_counter <= 5'd7;
+          endcase
+        end
       end
       S_TXING : begin
         sclk <= ~sclk;
@@ -107,6 +122,26 @@ always_ff @(posedge clk) begin : spi_controller_fsm
           WRITE_8_READ_24 : bit_counter <= 5'd24;
           default : bit_counter <= 0;
         endcase
+      end
+      S_RXING : begin
+        sclk <= ~sclk;
+        if(~sclk) begin // positive edge logic
+          if(bit_counter != 0) begin
+            bit_counter <= bit_counter - 1;
+          end else begin
+            case(spi_mode)
+              WRITE_8_READ_8 : o_data <= {16'b0, rx_data[7:0]};
+              WRITE_8_READ_16: o_data <= { 8'b0, rx_data[15:0]};
+              WRITE_8_READ_24: o_data <= rx_data[23:0];
+              default:         o_data <= 0;
+            endcase
+            o_valid <= 1;
+            state <= S_IDLE;
+            i_ready <= 1; // This logic would have to change if we wanted to use o_ready.
+          end
+        end else begin // negative edge logic
+          rx_data[bit_counter] <= miso;
+        end
       end
       default : state <= S_ERROR;
     endcase
