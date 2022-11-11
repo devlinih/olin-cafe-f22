@@ -165,7 +165,7 @@ ft6206_controller #(.CLK_HZ(CLK_HZ), .I2C_CLK_HZ(400_000)) FT6206(
   .clk(clk), .rst(rst), .ena(1'b1),
   .scl(touch_i2c_scl), .sda(touch_i2c_sda)
 `ifndef SIMULATION
-  , .touch0(touch0), .touch1(touch1)
+  , .touch0(touch0), // .touch1(touch1)
 `endif // SIMULATION
 );
 
@@ -183,18 +183,20 @@ block_ram #(.W(VRAM_W), .L(VRAM_L)) VRAM(
 );
 // Add your vram control FSM here:
 typedef enum logic [1:0] {
-  CLEAR, DRAW, UPDATE
+  CLEAR, IDLE, DRAWING, ERROR
 } vram_fsm;
 
 vram_fsm state;
+logic [11:0] pixel_x, pixel_y; // Stash the coord in a reg
 
 always_ff @(posedge clk) begin
    if (rst) begin
+      // Reset overpowers all
       state <= CLEAR;
       vram_clear_counter <= VRAM_L-1;
       vram_wr_addr <= 0;
       vram_wr_ena <= 1'b1;
-      vram_wr_data <= 0;
+      vram_wr_data <= BLACK;
    end
    case (state)
      CLEAR: begin
@@ -203,7 +205,25 @@ always_ff @(posedge clk) begin
            vram_wr_addr <= vram_wr_addr + 1;
         end else begin
            vram_wr_ena <= 0;
-           state <= DRAW;
+           state <= IDLE;
+        end
+     end
+     IDLE: begin
+        // If valid input, switch to drawing state.
+        if (touch0.valid) begin
+           state <= DRAWING;
+           pixel_x <= touch0.x;
+           pixel_y <= touch0.y;
+           vram_clear_counter <= 8; // Reuse this signal for the brush
+           vram_wr_ena <= 1;
+        end
+     end
+     DRAWING: begin
+        if (vram_clear_counter == 0) begin
+           state <= IDLE;
+           vram_wr_ena <= 0;
+        end else begin
+           //
         end
      end
    endcase
