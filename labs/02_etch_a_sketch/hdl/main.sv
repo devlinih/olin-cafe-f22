@@ -165,7 +165,7 @@ ft6206_controller #(.CLK_HZ(CLK_HZ), .I2C_CLK_HZ(400_000)) FT6206(
   .clk(clk), .rst(rst), .ena(1'b1),
   .scl(touch_i2c_scl), .sda(touch_i2c_sda)
 `ifndef SIMULATION
-  , .touch0(touch0), // .touch1(touch1)
+  , .touch0(touch0), .touch1(touch1)
 `endif // SIMULATION
 );
 
