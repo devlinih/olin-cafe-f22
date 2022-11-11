@@ -18,7 +18,7 @@ parameter SYS_CLK_HZ = 12_000_000; // aka ticks per second
 parameter SYS_CLK_PERIOD_NS = (1_000_000_000/SYS_CLK_HZ);
 parameter CLK_HZ = 10*SYS_CLK_HZ; // aka ticks per second
 parameter CLK_PERIOD_NS = (1_000_000_000/CLK_HZ); // Approximation.
-parameter PWM_PERIOD_US = 100; 
+parameter PWM_PERIOD_US = 100;
 parameter PWM_WIDTH = $clog2(320);
 parameter PERIOD_MS_FADE = 100;
 parameter DISPLAY_WIDTH = 240;
@@ -46,7 +46,7 @@ input wire spi_miso;
 
 `ifdef SIMULATION
 assign clk = sysclk;
-`else 
+`else
 // This project wants a faster clock. The MMCME2 module is built in to the FPGA can can generate higher clock frequencies from a base clock. Check out [UG953](https://docs.xilinx.com/r/2021.2-English/ug953-vivado-7series-libraries/MMCME2_BASE) if you want to learn more about how this works.
 wire clk_feedback;
 MMCME2_BASE #(
@@ -149,7 +149,7 @@ ili9341_display_controller ILI9341(
   .vram_rd_addr(vram_rd_addr),
   .vram_rd_data(vram_rd_data),
   // !!! NOTE - change enable_test_pattern to zero once you start implementing the video ram !!!
-  .enable_test_pattern(1'b1) 
+  .enable_test_pattern(1'b1)
 );
 
 /* ------------------------------------------------------------------------- */
@@ -187,11 +187,11 @@ typedef enum logic [1:0] {
 } vram_fsm;
 
 vram_fsm state;
-   
+
 always_ff @(posedge clk) begin
    if (rst) state <= CLEAR;
    case (state)
-     
+
    endcase
 end
 
