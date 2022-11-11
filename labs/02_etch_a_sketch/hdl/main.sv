@@ -189,9 +189,23 @@ typedef enum logic [1:0] {
 vram_fsm state;
 
 always_ff @(posedge clk) begin
-   if (rst) state <= CLEAR;
+   if (rst) begin
+      state <= CLEAR;
+      vram_clear_counter <= VRAM_L-1;
+      vram_wr_addr <= 0;
+      vram_wr_ena <= 1'b1;
+      vram_wr_data <= 0;
+   end
    case (state)
-
+     CLEAR: begin
+        if (vram_clear_counter != 0) begin
+           vram_clear_counter <= vram_clear_counter - 1;
+           vram_wr_addr <= vram_wr_addr + 1;
+        end else begin
+           vram_wr_ena <= 0;
+           state <= DRAW;
+        end
+     end
    endcase
 end
 
