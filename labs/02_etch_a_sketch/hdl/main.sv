@@ -182,5 +182,17 @@ block_ram #(.W(VRAM_W), .L(VRAM_L)) VRAM(
   .wr_ena(vram_wr_ena), .wr_addr(vram_wr_addr), .wr_data(vram_wr_data)
 );
 // Add your vram control FSM here:
+typedef enum logic [1:0] {
+  CLEAR, DRAW, UPDATE
+} vram_fsm;
+
+vram_fsm state;
+   
+always_ff @(posedge clk) begin
+   if (rst) state <= CLEAR;
+   case (state)
+     
+   endcase
+end
 
 endmodule
