@@ -187,7 +187,10 @@ typedef enum logic [1:0] {
 } vram_fsm;
 
 vram_fsm state;
-logic [11:0] pixel_x, pixel_y; // Stash the coord in a reg
+localparam N_X = $clog2(DISPLAY_WIDTH);
+localparam N_Y = $clog2(DISPLAY_HEIGHT);
+logic [N_X-1:0] pixel_x;
+logic [N_Y-1:0] pixel_y; // Stash the coord in a reg
 
 always_ff @(posedge clk) begin
    if (rst) begin
@@ -212,18 +215,21 @@ always_ff @(posedge clk) begin
         // If valid input, switch to drawing state.
         if (touch0.valid) begin
            state <= DRAWING;
-           pixel_x <= touch0.x;
-           pixel_y <= touch0.y;
+           pixel_x <= touch0.x[N_X-1:0];
+           pixel_y <= touch0.y[N_Y-1:0];
            vram_clear_counter <= 8; // Reuse this signal for the brush
            vram_wr_ena <= 1;
+           vram_wr_addr <= pixel_y*DISPLAY_WIDTH + {8'd0, pixel_x};
+           vram_wr_data <= WHITE;
         end
      end
      DRAWING: begin
         if (vram_clear_counter == 0) begin
            state <= IDLE;
            vram_wr_ena <= 0;
+           vram_wr_data <= BLACK;
         end else begin
-           //
+           // This should never run unless we modify the brush
         end
      end
    endcase
