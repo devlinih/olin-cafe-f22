@@ -72,7 +72,7 @@ MMCME2_BASE_inst (
 // Touch signals
 touch_t touch0, touch1;
 
-`define LAB_PART_1 // Uncomment once you start working on the next parts.
+//`define LAB_PART_1 // Uncomment once you start working on the next parts.
 
 /* ------------------------------------------------------------------------- */
 /* -- Part 1 - Intro to Sequential Logic on FPGAs                         -- */
@@ -114,7 +114,7 @@ pwm #(.N(PWM_WIDTH)) PWM_LED1 (
   .out(leds[1])
 );
 
-`define LAB_PART_1
+//`define LAB_PART_1
 always_comb begin: led_pwm_muxes
 `ifdef LAB_PART_1
   // For part 1, use the output of the triangle generators.
@@ -149,7 +149,7 @@ ili9341_display_controller ILI9341(
   .vram_rd_addr(vram_rd_addr),
   .vram_rd_data(vram_rd_data),
   // !!! NOTE - change enable_test_pattern to zero once you start implementing the video ram !!!
-  .enable_test_pattern(1'b1)
+  .enable_test_pattern(1'b0)
 );
 
 /* ------------------------------------------------------------------------- */
@@ -165,7 +165,7 @@ ft6206_controller #(.CLK_HZ(CLK_HZ), .I2C_CLK_HZ(400_000)) FT6206(
   .clk(clk), .rst(rst), .ena(1'b1),
   .scl(touch_i2c_scl), .sda(touch_i2c_sda)
 `ifndef SIMULATION
-  , .touch0(touch0), .touch1(touch1)
+  , .touch0(touch0)//, .touch1(touch1)
 `endif // SIMULATION
 );
 
