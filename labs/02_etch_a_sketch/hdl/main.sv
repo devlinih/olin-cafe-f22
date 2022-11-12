@@ -217,7 +217,7 @@ always_ff @(posedge clk) begin
            state <= DRAWING;
            pixel_x <= touch0.x[N_X-1:0];
            pixel_y <= touch0.y[N_Y-1:0];
-           vram_clear_counter <= 8; // Reuse this signal for the brush
+           vram_clear_counter <= 0; // Reuse this signal for the brush
            vram_wr_ena <= 1;
            vram_wr_addr <= pixel_y*DISPLAY_WIDTH + {8'd0, pixel_x};
            vram_wr_data <= WHITE;
@@ -230,6 +230,7 @@ always_ff @(posedge clk) begin
            vram_wr_data <= BLACK;
         end else begin
            // This should never run unless we modify the brush
+           vram_clear_counter <= vram_clear_counter - 1;
         end
      end
    endcase
