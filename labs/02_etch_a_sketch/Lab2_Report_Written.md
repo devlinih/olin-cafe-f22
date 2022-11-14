@@ -26,7 +26,7 @@ We don't really understand the `TX_PIXEL_DATA_BUSY` here since we dont see this 
 ### `ft6206_controller.sv`
 The ft6206 chip communicates via i2c protocol which also follows a handshake protocol; however, the communication is two-way at all times. This controller works on an 8 state FSM that has he following states: the idle state (`IDLE`), the initializing state (`INIT`), the waiting-for-i2c-to-write (`WAIT_FOR_I2C_WR`), the waiting-for-i2c-to-read (`WAIT_FOR_I2C_RD`), the setting-touch-threshold (`SET_THRESHOLD_REG` & `SET_THRESHOLD_DATA`) states, the detect touch (`TOUCH_START`) state, the get-register-and-its-data-based-on-touch (`GET_REG_REG`, & `GET_REG_DATA`, & `GET_REG_DONE`) states, the TOUCH_DONE state, and an `ERROR` state used for debugging purposes.
 
-![ft6202 fsm diagram](docs/pt6206fsm.jpg)
+![ft6202 fsm diagram](docs/ft6206fsm.jpg)
 
 #### Main FSM
 The `INIT` state is called to initialize the controller, which pulls the information for the touch sensitivity by transitioning to the `SET_THRESHOLD_REG` state.
