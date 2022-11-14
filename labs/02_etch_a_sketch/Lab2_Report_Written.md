@@ -6,7 +6,7 @@ Contributors: Devlin Ih, Arturo Joya
 ### `ili9341_display_controller.sv`
 The ili9341 chip communicates via SPI protocol which follows a handshake transaction. The ili9341 display controller has two state machines; the main state machine that is in charge of sending the data to the screen, and a sub state machine in the intitializing state that configures the data from the ROM.
 
-The main state machine has 6 states - the initializing state (INIT), the finding-the-pixel-to-write-to (INCREMENTING_PIXEL) state, the ready-to-create-the-image (START_FRAME) state, the begin-sending-pixel-data (TX_PIXEL_DATA_START) state, the I'm-in-the-middle-of-sending-data (TX_PIXEL_DATA_BUSY) state, and an idle (WAIT_FOR_SPI) state. There is also an `ERROR` state that is used primarily for debugging the system.
+The main state machine has 6 states - the initializing state (`INIT`), the finding-the-pixel-to-write-to (`INCREMENTING_PIXEL`) state, the ready-to-create-the-image (`START_FRAME`) state, the begin-sending-pixel-data (`TX_PIXEL_DATA_START`) state, the I'm-in-the-middle-of-sending-data (`TX_PIXEL_DATA_BUSY`) state, and an idle (`WAIT_FOR_SPI`) state. There is also an `ERROR` state that is used primarily for debugging the system.
 
 ![ili9341 fsm diagram](docs/ili9341fsm.jpg)
 
@@ -15,11 +15,11 @@ The INIT state is in charge of configuring how the data packets are supposed to 
 
 In the `START_FRAME` state, we essentially declare that we are ready to start creating the image. We still need to wait for the SPI, so we set our state to wait for the SPI. However, we also set a `state_after_wait` which is essentially what we will do after waiting for the SPI. In this case, we are essentially going from 'ready to create the image' to 'start creating the image' (`TX_PIXEL_DATA_START`).
 
-The `WAIT_FOR_SPI` state does nothing until the SPI is ready to recieve data (when `i_ready` turns high). 
+The `WAIT_FOR_SPI` state does nothing until the SPI is ready to recieve data (when `i_ready` turns high).
 
 The `TX_PIXEL_DATA_START` begins the transmission of data. Similarly to `START_FRAME`, we must wait for the SPI, so we set the state to `WAIT_FOR_SPI`. However, unlike `START_FRAME`, once the SPI confirms that it is ready to receive data, we will instead update the pixel that we will be writing to (`INCREMENTING_PIXEL`)
 
-THe `INCREMENTING_PIXEL` loops through the pixels by sweeping the x axis for every y axis - increasing the y axis once the x axis had been sweeped. Note every time we enter this stage, we only increase by 1 pixel. As long as the pixels have not been maxed out, we have to go back to `TX_PIXEL_DATA_START` so we can transmit the data of a new (the next) pixel. Once the max pixel has been reached, then it is time to go to a new frame. Thus, once the last x and y pixels have been written, they are then both set to 0, and the next state becomes `START_FRAME`.
+The `INCREMENTING_PIXEL` loops through the pixels by sweeping the x axis for every y axis - increasing the y axis once the x axis had been sweeped. Note every time we enter this stage, we only increase by 1 pixel. As long as the pixels have not been maxed out, we have to go back to `TX_PIXEL_DATA_START` so we can transmit the data of a new (the next) pixel. Once the max pixel has been reached, then it is time to go to a new frame. Thus, once the last x and y pixels have been written, they are then both set to 0, and the next state becomes `START_FRAME`.
 
 We don't really understand the `TX_PIXEL_DATA_BUSY` here since we dont see this state ever being called.
 
