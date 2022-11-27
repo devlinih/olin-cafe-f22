@@ -71,4 +71,51 @@ alu_behavioural ALU (
 
 // Implement your multicycle rv32i CPU here!
 
+//Multicycle control unit 
+//Main FSM Decoder
+logic [1:0] ALUop
+always_ff @(negedge clk) : begin
+
+end
+
+// ALU Decoder (CL)
+logic [2:0] ALU_control; 
+always_comb : begin : ALU_decoder
+if( ~ALUop | ((ALUop[1] & ~ALUop[0]) & ~(op[5] & funct7[5]) & ~funct3)) : ALU_control = 000;
+if((~ALUop[1] & ALUop[0]) | ((ALUop[1] & ~ALUop[0]) & (op[5] & funct7[5]) & ~funct3)) : ALU_control = 001;
+if((ALUop[1] & ~ALUop[0]) & (~funct3[2] & funct3[1] & ~funct3[0])) : ALU_control = 101;
+if((ALUop[1] & ~ALUop[0]) & (funct3[2] & funct3[1] & ~funct3[0])) : ALU_cotrol = 011;
+if((ALUop[1] & ~ALUop[0]) & (funct3[2] & funct3[1] & ~funct3[0])) : ALU_cotrol = 010;
+end
+
+// Instr Decoder (CL)
+always_comb : begin : Instr_decoder
+if (~op[6:2] | (~op[6:5] & op[4] & ~op[3:2]) | (op[6:5] & ~op[4:3] & op[2])) : Immext
+end
+
+// Read Address (CL)
+always_comb : begin : address_read
+
+end
+
+// Immediate Extension
+always_comb : begin : imm_ext
+
+end
+
+// ALU A
+always_comb : begin : alu_a 
+
+end
+
+// ALU B
+always_comb : begin : alu_b
+
+end
+
+// Results
+always_comb : begin : alu_res
+
+end
+
 endmodule
