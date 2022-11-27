@@ -71,6 +71,23 @@ alu_behavioural ALU (
 
 // Implement your multicycle rv32i CPU here!
 
+// Signals, names on schematic may differ it if was defined for use of rfile, memory, etc.
+logic [31:0] result, 
+             pc, old_pc,
+             adr, 
+             read_data, write_data, 
+             instr, data, 
+             imm_ext, 
+             a, write_data, 
+             alu_a, alu_b, 
+             alu_out;
+
+// Signals from controller
+logic [1:0] imm_src, alu_src_a, alu_src_b, res_src;
+logic [2:0] res_src;
+logic       pc_write, adr_src, mem_write, ir_write, reg_write;
+
+
 //Multicycle control unit 
 //Main FSM Decoder
 logic [1:0] ALUop
@@ -95,7 +112,7 @@ end
 
 // Read Address (CL)
 always_comb : begin : address_read
-
+   
 end
 
 // Immediate Extension
