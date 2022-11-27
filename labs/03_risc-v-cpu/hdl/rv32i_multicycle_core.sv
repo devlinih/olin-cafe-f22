@@ -87,6 +87,10 @@ logic [1:0] imm_src, alu_src_a, alu_src_b, res_src;
 logic [2:0] res_src;
 logic       pc_write, adr_src, mem_write, ir_write, reg_write;
 
+// Signals used internally for controller
+logic       branch, pc_update;
+logic [1:0] alu_op;
+
 
 //Multicycle control unit 
 //Main FSM Decoder
