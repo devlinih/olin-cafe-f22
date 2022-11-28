@@ -74,7 +74,6 @@ alu_behavioural ALU (
 // Signals, names on schematic may differ it if was defined for use of rfile, memory, etc.
 logic [31:0] result,
              adr,
-             read_data, write_data,
              instr, data,
              imm_ext,
              a, write_data,
@@ -209,4 +208,21 @@ always_comb begin : result
    endcase
 end
 
+// Registers for multicycle state
+
+// Instruction Reg
+always_ff (@posedge) begin
+   if (rst) begin
+      /*AUTORESET*/
+      // Beginning of autoreset for uninitialized flops
+      PC_old <= 32'h0;
+      instr <= 32'h0;
+      // End of automatics
+   end 
+   else if (ir_write) begin
+      PC_old <= PC;
+      instr  <= mem_rd_data;
+   end
+end
+   
 endmodule
