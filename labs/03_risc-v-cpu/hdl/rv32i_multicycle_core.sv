@@ -87,6 +87,7 @@ enum logic {IMM_I_TYPE, IMM_B_TYPE, IMM_J_TYPE, IMM_S_TYPE, IMM_U_TYPE} imm_src;
 enum logic {ALUA_PC, ALUA_OLD_PC, ALUA_REG_FILE}            alu_src_a;
 enum logic {ALUB_REGFILE, ALUB_IMMEDIATE, ALUB_FOUR}        alu_src_b;
 enum logic {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT}          res_src;
+enum logic {POINTER, RES}                                   adr_src;
 
 logic pc_write, adr_src, mem_write, ir_write, reg_write;
 
@@ -120,47 +121,49 @@ end
 // ALU Decoder (CL)
 //logic [2:0] ALU_control;
 always_comb : begin : ALU_decoder
-case(ALUop)
-2'b00: alu_control = ALU_ADD;
-2'b01: alu_control = ALU_SUB;
-2'b10: begin
-  case(funct3)
-  3'b000: begin
-    case({op[5],funct7[5]})
-    2'b00: alu_control = ALU_ADD;
-    2'b01: alu_control = ALU_ADD;
-    2'b10: alu_control = ALU_ADD;
-    2'b11: alu_control = ALU_SUB;
-    endcase
-  end
-  3'b010: alu_control = ALU_SLT;
-  3'b110: alu_control = ALU_OR;
-  3'b111: alu_control = ALU_AND;
-endcase
-end
-endcase
+   case(ALUop)
+     2'b00: alu_control = ALU_ADD;
+     2'b01: alu_control = ALU_SUB;
+     2'b10: begin
+       case(funct3)
+         3'b000: begin
+           case({op[5],funct7[5]})
+             2'b00: alu_control = ALU_ADD;
+             2'b01: alu_control = ALU_ADD;
+             2'b10: alu_control = ALU_ADD;
+             2'b11: alu_control = ALU_SUB;
+           endcase
+         end
+         3'b010: alu_control = ALU_SLT;
+         3'b110: alu_control = ALU_OR;
+         3'b111: alu_control = ALU_AND;
+       endcase
+     end
+   endcase
 end
 
 // Instr Decoder (CL)
 always_comb : begin : Instr_decoder
-case(op)
-7'b0000011: imm_src = I_TYPE;
-7'b0010011: imm_src = I_TYPE;
-7'b1100111: imm_src = I_TYPE;
-7'b0100011: imm_src = S_TYPE;
-7'b1100011: imm_src = B_TYPE;
-7'b1101111: imm_src = J_TYPE;
-7'b0010111: imm_src = U_TYPE;
-7'b0110111: imm_src = U_TYPE;
-endcase
-
+   case(op)
+     7'b0000011: imm_src = I_TYPE;
+     7'b0010011: imm_src = I_TYPE;
+     7'b1100111: imm_src = I_TYPE;
+     7'b0100011: imm_src = S_TYPE;
+     7'b1100011: imm_src = B_TYPE;
+     7'b1101111: imm_src = J_TYPE;
+     7'b0010111: imm_src = U_TYPE;
+     7'b0110111: imm_src = U_TYPE;
+   endcase
 end
 
 //Multicycle Core 
 
 // Read Address (CL)
 always_comb : begin : address_read
-
+   case(adr_src)
+     POINTER: mem_addr = PC;
+     RES: mem_addr = result;
+   endcase
 end
 
 // Immediate Extension
