@@ -239,7 +239,7 @@ always_ff @(posedge clk) begin : data_reg
 end
 
 // Register File Reg
-always_ff @(posedge clk) begin
+always_ff @(posedge clk) begin : rfile_reg
    if (rst) begin
       /*AUTORESET*/
       // Beginning of autoreset for uninitialized flops
@@ -250,6 +250,19 @@ always_ff @(posedge clk) begin
    else begin
       data_a     <= reg_data1;
       write_data <= reg_data2;
+   end
+end
+
+// Result Reg
+always_ff @(posedge clk) begin : result_reg
+   if (rst) begin
+      /*AUTORESET*/
+      // Beginning of autoreset for uninitialized flops
+      alu_out <= 32'h0;
+      // End of automatics
+   end
+   else begin
+      alu_out <= alu_result;
    end
 end
 
