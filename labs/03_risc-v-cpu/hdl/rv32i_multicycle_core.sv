@@ -84,9 +84,9 @@ logic [31:0] result,
 // Signals from controller
 // enum logic {MEM_SRC_PC, MEM_SRC_RESULT} mem_src;
 enum logic {I_TYPE, B_TYPE, J_TYPE, U_TYPE} imm_src;
-enum logic {ALUA_PC, ALUA_OLD_PC, ALUA_REG_FILE} alu_src_a;
+enum logic {ALUA_PC, ALUA_OLD_PC, ALUA_REG_FILE}     alu_src_a;
 enum logic {ALUB_REGFILE, ALUB_IMMEDIATE, ALUB_FOUR} alu_src_b;
-enum logic {DATA, ALU_RES, ALU_OUT}         res_src;
+enum logic {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT}   res_src;
 
 logic pc_write, adr_src, mem_write, ir_write, reg_write;
 
@@ -179,8 +179,13 @@ always_comb : begin : alu_b
 end
 
 // Results
-always_comb : begin : alu_res
-
+always_comb : begin : result
+   case (res_src)
+     RES_DATA       : result = data;
+     RES_ALU_RESULT : result = alu_result;
+     RES_ALU_OUT    : result = alu_out;
+     default        : result = 0;
+   endcase
 end
 
 endmodule
