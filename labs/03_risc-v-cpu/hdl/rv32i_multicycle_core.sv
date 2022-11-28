@@ -122,21 +122,21 @@ end
 //logic [2:0] ALU_control; 
 always_comb : begin : ALU_decoder
 case(ALUop)
-2'00: alu_control = ALU_ADD;
-2'01: alu_control = ALU_SUB;
-2'10: begin
+2'b00: alu_control = ALU_ADD;
+2'b01: alu_control = ALU_SUB;
+2'b10: begin
   case(funct3)
-  3'000: begin
+  3'b000: begin
     case({op[5],funct7[5]})
-    2'00: alu_control = ALU_ADD;
-    2'01: alu_control = ALU_ADD;
-    2'10: alu_control = ALU_ADD;
-    2'11: alu_control = ALU_SUB;
+    2'b00: alu_control = ALU_ADD;
+    2'b01: alu_control = ALU_ADD;
+    2'b10: alu_control = ALU_ADD;
+    2'b11: alu_control = ALU_SUB;
     endcase
   end
-  3'010: alu_control = ALU_SLT;
-  3'110: alu_control = ALU_OR;
-  3'111: alu_control = ALU_AND;
+  3'b010: alu_control = ALU_SLT;
+  3'b110: alu_control = ALU_OR;
+  3'b111: alu_control = ALU_AND;
 endcase
 end
 endcase
