@@ -85,7 +85,7 @@ logic [31:0] result,
 // Signals from controller
 // enum logic {MEM_SRC_PC, MEM_SRC_RESULT} mem_src;
 enum logic {I_TYPE, B_TYPE, J_TYPE, U_TYPE} imm_src;
-enum logic {PC, OLD_PC, REG_FILE}           alu_src_a;
+enum logic {ALUA_PC, ALUA_OLD_PC, ALUA_REG_FILE} alu_src_a;
 enum logic {REGFILE, IMMEDIATE, FOUR}       alu_src_b;
 enum logic {DATA, ALU_RES, ALU_OUT}         res_src;
 
@@ -120,7 +120,7 @@ end
 
 // Read Address (CL)
 always_comb : begin : address_read
-   
+
 end
 
 // Immediate Extension
@@ -129,8 +129,13 @@ always_comb : begin : imm_ext
 end
 
 // ALU A
-always_comb : begin : alu_a 
-
+always_comb : begin : alu_a
+   case (alu_src_a)
+     ALUA_PC       : alu_a = pc;
+     ALUA_OLD_PC   : alu_a = old_pc;
+     ALUA_REG_FILE : alu_a = a;
+     default       : alu_a = 0;
+   endcase
 end
 
 // ALU B
