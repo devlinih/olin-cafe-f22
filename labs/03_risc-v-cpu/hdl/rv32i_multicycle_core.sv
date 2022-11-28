@@ -86,7 +86,7 @@ logic [31:0] result,
 // enum logic {MEM_SRC_PC, MEM_SRC_RESULT} mem_src;
 enum logic {I_TYPE, B_TYPE, J_TYPE, U_TYPE} imm_src;
 enum logic {ALUA_PC, ALUA_OLD_PC, ALUA_REG_FILE} alu_src_a;
-enum logic {REGFILE, IMMEDIATE, FOUR}       alu_src_b;
+enum logic {ALUB_REGFILE, ALUB_IMMEDIATE, ALUB_FOUR} alu_src_b;
 enum logic {DATA, ALU_RES, ALU_OUT}         res_src;
 
 logic pc_write, adr_src, mem_write, ir_write, reg_write;
@@ -171,7 +171,12 @@ end
 
 // ALU B
 always_comb : begin : alu_b
-
+   case (alu_src_b)
+     ALUB_REGFILE   : src_b = write_data;
+     ALUB_IMMEDIATE : src_b = imm_ext;
+     ALUB_FOUR      : src_b = 4;
+     default        : src_b = 4;
+   endcase
 end
 
 // Results
