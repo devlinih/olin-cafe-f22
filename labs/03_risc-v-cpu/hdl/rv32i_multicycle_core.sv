@@ -100,7 +100,7 @@ logic [24:0] imm_in;
 logic [6:0] funct7, op;
 logic [2:0] funct3;
 
-always_comb : begin : instr_decomp
+always_comb begin : instr_decomp
 rs1 = instr[19:15];
 rs2 = instr[24:20];
 rd = instr[11:7];
@@ -120,7 +120,7 @@ end
 
 // ALU Decoder (CL)
 //logic [2:0] ALU_control;
-always_comb : begin : ALU_decoder
+always_comb begin : ALU_decoder
    case(ALUop)
      2'b00: alu_control = ALU_ADD;
      2'b01: alu_control = ALU_SUB;
@@ -143,7 +143,7 @@ always_comb : begin : ALU_decoder
 end
 
 // Instr Decoder (CL)
-always_comb : begin : Instr_decoder
+always_comb begin : Instr_decoder
    case(op)
      7'b0000011: imm_src = I_TYPE;
      7'b0010011: imm_src = I_TYPE;
@@ -159,7 +159,7 @@ end
 //Multicycle Core 
 
 // Read Address (CL)
-always_comb : begin : address_read
+always_comb begin : address_read
    case(adr_src)
      POINTER: mem_addr = PC;
      RES: mem_addr = result;
@@ -167,7 +167,7 @@ always_comb : begin : address_read
 end
 
 // Immediate Extension
-always_comb : begin : imm_ext
+always_comb begin : imm_ext
    case (imm_src)
      IMM_I_TYPE : imm_ext = {{20{instr[31]}}, instr[31:20]};
      IMM_S_TYPE : imm_ext = {{20{instr[31]}}, instr[31:25], instr[11:7]};
@@ -179,7 +179,7 @@ always_comb : begin : imm_ext
 end
 
 // ALU A
-always_comb : begin : alu_a
+always_comb begin : alu_a
    case (alu_src_a)
      ALUA_PC       : src_a = pc;
      ALUA_OLD_PC   : src_a = old_pc;
@@ -189,7 +189,7 @@ always_comb : begin : alu_a
 end
 
 // ALU B
-always_comb : begin : alu_b
+always_comb begin : alu_b
    case (alu_src_b)
      ALUB_REGFILE   : src_b = write_data;
      ALUB_IMMEDIATE : src_b = imm_ext;
@@ -199,7 +199,7 @@ always_comb : begin : alu_b
 end
 
 // Results
-always_comb : begin : result
+always_comb begin : result
    case (res_src)
      RES_DATA       : result = data;
      RES_ALU_RESULT : result = alu_result;
