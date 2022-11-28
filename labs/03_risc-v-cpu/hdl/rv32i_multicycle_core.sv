@@ -83,9 +83,13 @@ logic [31:0] result,
              alu_out;
 
 // Signals from controller
-logic [1:0] imm_src, alu_src_a, alu_src_b, res_src;
-logic [2:0] res_src;
-logic       pc_write, adr_src, mem_write, ir_write, reg_write;
+// enum logic {MEM_SRC_PC, MEM_SRC_RESULT} mem_src;
+enum logic {I_TYPE, B_TYPE, J_TYPE, U_TYPE} imm_src;
+enum logic {PC, OLD_PC, REG_FILE}           alu_src_a;
+enum logic {REGFILE, IMMEDIATE, FOUR}       alu_src_b;
+enum logic {DATA, ALU_RES, ALU_OUT}         res_src;
+
+logic pc_write, adr_src, mem_write, ir_write, reg_write;
 
 // Signals used internally for controller
 logic       branch, pc_update;
