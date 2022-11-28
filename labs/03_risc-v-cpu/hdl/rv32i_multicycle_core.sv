@@ -72,14 +72,13 @@ alu_behavioural ALU (
 // Implement your multicycle rv32i CPU here!
 
 // Signals, names on schematic may differ it if was defined for use of rfile, memory, etc.
-logic [31:0] result, 
+logic [31:0] result,
              pc, old_pc,
-             adr, 
-             read_data, write_data, 
-             instr, data, 
-             imm_ext, 
-             a, write_data, 
-             alu_a, alu_b, 
+             adr,
+             read_data, write_data,
+             instr, data,
+             imm_ext,
+             a, write_data,
              alu_out;
 
 // Signals from controller
@@ -162,10 +161,10 @@ end
 // ALU A
 always_comb : begin : alu_a
    case (alu_src_a)
-     ALUA_PC       : alu_a = pc;
-     ALUA_OLD_PC   : alu_a = old_pc;
-     ALUA_REG_FILE : alu_a = a;
-     default       : alu_a = 0;
+     ALUA_PC       : src_a = pc;
+     ALUA_OLD_PC   : src_a = old_pc;
+     ALUA_REG_FILE : src_a = a;
+     default       : src_a = 0;
    endcase
 end
 
