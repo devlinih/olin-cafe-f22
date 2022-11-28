@@ -143,16 +143,16 @@ always_comb begin : ALU_decoder
 end
 
 // Instr Decoder (CL)
-always_comb begin : Instr_decoder
+always_comb begin : instr_decoder
    case(op)
-     7'b0000011: imm_src = I_TYPE;
-     7'b0010011: imm_src = I_TYPE;
-     7'b1100111: imm_src = I_TYPE;
-     7'b0100011: imm_src = S_TYPE;
-     7'b1100011: imm_src = B_TYPE;
-     7'b1101111: imm_src = J_TYPE;
-     7'b0010111: imm_src = U_TYPE;
-     7'b0110111: imm_src = U_TYPE;
+     7'b0000011: imm_src = IMM_I_TYPE;
+     7'b0010011: imm_src = IMM_I_TYPE;
+     7'b1100111: imm_src = IMM_I_TYPE;
+     7'b0100011: imm_src = IMM_S_TYPE;
+     7'b1100011: imm_src = IMM_B_TYPE;
+     7'b1101111: imm_src = IMM_J_TYPE;
+     7'b0010111: imm_src = IMM_U_TYPE;
+     7'b0110111: imm_src = IMM_U_TYPE;
    endcase
 end
 
