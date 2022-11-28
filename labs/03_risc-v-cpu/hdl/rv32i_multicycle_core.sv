@@ -114,26 +114,30 @@ end
 
 //Main FSM Decoder
 enum logic [3:0] {S0_FETCH, S1_DECODE, S2_MEM_ADR, S3_MEM_READ, S4_MEMWB, S5_MEM_WRITE, S6_R_TYPE, S7_ALUWB, S8_I_TYPE} state;
-logic [1:0] ALUop;
+//logic [1:0] ALUop;
 always_ff @(negedge clk) begin
   if(rst) begin
   state <= S0_FETCH;
   end else begin
     case(state)
     S0_FETCH : begin
+      PC_ena <= 0;
       adr_src <= 0;
-      ir_write <= 1'b1;
+      mem_wr_ena <= 0;
+      ir_write <= 1;
+      reg_write <= 0;
       alu_src_a <= ALUA_PC;
       alu_src_b <= ALUB_FOUR;
-      ALUop <= 2'b00;
+      alu_op <= 2'b00;
       res_src <= RES_ALU_RESULT;
       pc_update <= 1;
       if(something) : state <= S1_DECODE;
     end
     S1_DECODE : begin
+      ir_write <= 0;
       alu_src_a <= ALUA_OLD_PC;
       alu_src_b <= ALUB_IMMEDIATE;
-      ALUop <= 2'b00;
+      alu_op <= 2'b00;
       if((op == OP_LTYPE)|(op == OP_STYPE)): state <= S2_MEM_ADR;
       if((op == OP_RTYPE)): state <= S6_R_TYPE;
       if((op == OP_ITYPE)): stae <= S8_I_TYPE;
@@ -141,19 +145,50 @@ always_ff @(negedge clk) begin
     S2_MEM_ADR : begin
       alu_src_a <= ALUA_REG_FILE;
       alu_src_b <= ALUB_IMMEDIATE;
-      ALUop <= 2'b00;
+      alu_op <= 2'b00;
       if((op == OP_LTYPE)): state <= S3_MEM_READ;
       if((op == OP_STYPE)): state <= S5_MEM_WRITE;
     end
-
+    S3_MEM_READ : begin
+      res_src <= RES_ALU_OUT;
+      adr_src <= 1;
+      if(something) : state <= S4_MEMWB;
+    end
+    S4_MEMWB : begin
+      res_src <= RES_DATA;
+      reg_write <= 1;
+      if(something): state <= S0_FETCH;
+    end
+    S5_MEM_WRITE : begin
+      res_src <= RES_DATA;
+      adr_src <= 1;
+      mem_wr_ena <=1;
+      if(something): state <= S0_FETCH;
+    end
+    S6_R_TYPE : begin
+      alu_src_a <= ALUA_REG_FILE;
+      alu_src_b <= ALUB_REGFILE
+      alu_op <= 2'b10;
+      if(something): state <= S7_ALUWB;
+    end
+    S7_ALUWB : begin
+      res_src <= RES_ALU_OUT;
+      reg_write <= 1;
+      if(something): state <= S0_FETCH;
+    end
+    S8_I_TYPE : begin
+      alu_src_a <= ALUA_REG_FILE;
+      alu_src_b <= ALUB_IMMEDIATE;
+      alu_op <= 2'b10;
+    end
     endcase
-
+  end
 end
 
 // ALU Decoder (CL)
 //logic [2:0] ALU_control;
 always_comb begin : ALU_decoder
-   case(ALUop)
+   case(alu_op)
      2'b00: alu_control = ALU_ADD;
      2'b01: alu_control = ALU_SUB;
      2'b10: begin
