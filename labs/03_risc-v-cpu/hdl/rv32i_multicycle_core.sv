@@ -113,8 +113,40 @@ end
 //Multicycle control unit
 
 //Main FSM Decoder
-logic [1:0] ALUop
-always_ff @(negedge clk) : begin
+enum logic [3:0] {S0_FETCH, S1_DECODE, S2_MEM_ADR, S3_MEM_READ, S4_MEMWB, S5_MEM_WRITE, S6_R_TYPE, S7_ALUWB, S8_I_TYPE} state;
+logic [1:0] ALUop;
+always_ff @(negedge clk) begin
+  if(rst) begin
+  state <= S0_FETCH;
+  end else begin
+    case(state)
+    S0_FETCH : begin
+      adr_src <= 0;
+      ir_write <= 1'b1;
+      alu_src_a <= ALUA_PC;
+      alu_src_b <= ALUB_FOUR;
+      ALUop <= 2'b00;
+      res_src <= RES_ALU_RESULT;
+      pc_update <= 1;
+      if(something) : state <= S1_DECODE;
+    end
+    S1_DECODE : begin
+      alu_src_a <= ALUA_OLD_PC;
+      alu_src_b <= ALUB_IMMEDIATE;
+      ALUop <= 2'b00;
+      if((op == OP_LTYPE)|(op == OP_STYPE)): state <= S2_MEM_ADR;
+      if((op == OP_RTYPE)): state <= S6_R_TYPE;
+      if((op == OP_ITYPE)): stae <= S8_I_TYPE;
+    end
+    S2_MEM_ADR : begin
+      alu_src_a <= ALUA_REG_FILE;
+      alu_src_b <= ALUB_IMMEDIATE;
+      ALUop <= 2'b00;
+      if((op == OP_LTYPE)): state <= S3_MEM_READ;
+      if((op == OP_STYPE)): state <= S5_MEM_WRITE;
+    end
+
+    endcase
 
 end
 
