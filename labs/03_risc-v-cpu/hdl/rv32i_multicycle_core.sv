@@ -214,6 +214,10 @@ end
 always_ff @(posedge clk) begin : instr_reg
    if (rst) begin
       /*AUTORESET*/
+      // Beginning of autoreset for uninitialized flops
+      PC_old <= 32'h0;
+      instr <= 32'h0;
+      // End of automatics
    end 
    else if (ir_write) begin
       PC_old <= PC;
@@ -225,6 +229,9 @@ end
 always_ff @(posedge clk) begin : data_reg
    if (rst) begin
       /*AUTORESET*/
+      // Beginning of autoreset for uninitialized flops
+      data <= 32'h0;
+      // End of automatics
    end
    else begin
       data <= mem_rd_data;
@@ -235,6 +242,10 @@ end
 always_ff @(posedge clk) begin
    if (rst) begin
       /*AUTORESET*/
+      // Beginning of autoreset for uninitialized flops
+      data_a <= 32'h0;
+      write_data <= 32'h0;
+      // End of automatics
    end
    else begin
       data_a     <= reg_data1;
