@@ -118,7 +118,7 @@ always_ff @(negedge clk) : begin
 end
 
 // ALU Decoder (CL)
-//logic [2:0] ALU_control; 
+//logic [2:0] ALU_control;
 always_comb : begin : ALU_decoder
 case(ALUop)
 2'b00: alu_control = ALU_ADD;
@@ -143,7 +143,17 @@ end
 
 // Instr Decoder (CL)
 always_comb : begin : Instr_decoder
-if (~op[6:2] | (~op[6:5] & op[4] & ~op[3:2]) | (op[6:5] & ~op[4:3] & op[2])) : Immext
+case(op)
+7'b0000011: imm_src = I_TYPE;
+7'b0010011: imm_src = I_TYPE;
+7'b1100111: imm_src = I_TYPE;
+7'b0100011: imm_src = S_TYPE;
+7'b1100011: imm_src = B_TYPE;
+7'b1101111: imm_src = J_TYPE;
+7'b0010111: imm_src = U_TYPE;
+7'b0110111: imm_src = U_TYPE;
+endcase
+
 end
 
 //Multicycle Core 
