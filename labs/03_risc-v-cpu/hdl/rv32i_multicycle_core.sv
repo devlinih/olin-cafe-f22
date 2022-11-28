@@ -73,13 +73,14 @@ alu_behavioural ALU (
 
 // Signals, names on schematic may differ it if was defined for use of rfile, memory, etc.
 logic [31:0] result,
-             pc, old_pc,
              adr,
              read_data, write_data,
              instr, data,
              imm_ext,
              a, write_data,
              alu_out;
+
+assign PC_next = result; // Map PC_next and result together
 
 // Signals from controller
 // enum logic {MEM_SRC_PC, MEM_SRC_RESULT} mem_src;
@@ -89,10 +90,10 @@ enum logic {ALUB_REGFILE, ALUB_IMMEDIATE, ALUB_FOUR}        alu_src_b;
 enum logic {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT}          res_src;
 enum logic {POINTER, RES}                                   adr_src;
 
-logic pc_write, adr_src, mem_write, ir_write, reg_write;
+logic adr_src, mem_write, ir_write, reg_write;
 
 // Signals used internally for controller
-logic       branch, pc_update;
+logic       branch, PC_update;
 logic [1:0] alu_op;
 
 // Instruction signals decomposed 
@@ -181,8 +182,8 @@ end
 // ALU A
 always_comb begin : alu_a
    case (alu_src_a)
-     ALUA_PC       : src_a = pc;
-     ALUA_OLD_PC   : src_a = old_pc;
+     ALUA_PC       : src_a = PC;
+     ALUA_PC_OLD   : src_a = PC_old;
      ALUA_REG_FILE : src_a = a;
      default       : src_a = 0;
    endcase
