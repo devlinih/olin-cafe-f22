@@ -83,7 +83,7 @@ logic [31:0] result,
 
 // Signals from controller
 // enum logic {MEM_SRC_PC, MEM_SRC_RESULT} mem_src;
-enum logic {IMM_I_TYPE, IMM_B_TYPE, IMM_J_TYPE, IMM_U_TYPE} imm_src;
+enum logic {IMM_I_TYPE, IMM_B_TYPE, IMM_J_TYPE, IMM_S_TYPE, IMM_U_TYPE} imm_src;
 enum logic {ALUA_PC, ALUA_OLD_PC, ALUA_REG_FILE}            alu_src_a;
 enum logic {ALUB_REGFILE, ALUB_IMMEDIATE, ALUB_FOUR}        alu_src_b;
 enum logic {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT}          res_src;
