@@ -225,6 +225,14 @@ always_ff @(posedge clk) begin : instr_reg
    end
 end
 
-
+// Data Reg
+always_ff @(posedge clk) begin : data_reg
+   if (rst) begin
+      /*AUTORESET*/
+   end
+   else begin
+      data <= mem_rd_data;
+   end
+end
 
 endmodule
