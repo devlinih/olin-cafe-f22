@@ -165,7 +165,13 @@ end
 
 // Immediate Extension
 always_comb : begin : imm_ext
-
+   case (imm_src)
+     IMM_I_TYPE : imm_ext = {{20{instr[31]}}, instr[31:20]};
+     IMM_S_TYPE : imm_ext = {{20{instr[31]}}, instr[31:25], instr[11:7]};
+     IMM_B_TYPE : imm_ext = {{20{instr[31]}}, instr[7], instr[30:25], instr[11:8], 1’b0};
+     IMM_J_TYPE : imm_ext = {{12{instr[31]}}, instr[19:12], instr[20], instr[30:21], 1’b0};
+     IMM_U_TYPE : imm_ext = {{12{instr[31]}}, instr[31:12]};
+   endcase
 end
 
 // ALU A
