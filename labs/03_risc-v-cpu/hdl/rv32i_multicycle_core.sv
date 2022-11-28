@@ -76,7 +76,7 @@ logic [31:0] result,
              adr,
              instr, data,
              imm_ext,
-             a, write_data,
+             data_a, write_data,
              alu_out;
 
 assign PC_next = result; // Map PC_next and result together
@@ -183,7 +183,7 @@ always_comb begin : alu_a
    case (alu_src_a)
      ALUA_PC       : src_a = PC;
      ALUA_PC_OLD   : src_a = PC_old;
-     ALUA_REG_FILE : src_a = a;
+     ALUA_REG_FILE : src_a = data_a;
      default       : src_a = 0;
    endcase
 end
