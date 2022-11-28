@@ -91,8 +91,23 @@ logic       pc_write, adr_src, mem_write, ir_write, reg_write;
 logic       branch, pc_update;
 logic [1:0] alu_op;
 
+// Instruction signals decomposed 
+logic [24:0] imm_in;
+logic [6:0] funct7, op;
+logic [2:0] funct3;
 
-//Multicycle control unit 
+always_comb : begin : instr_decomp
+rs1 = instr[19:15];
+rs2 = instr[24:20];
+rd = instr[11:7];
+imm_in = instr[31:7];
+funct7 = instr[31:25];
+funct3 = instr[14:12];
+op = instr[6:0];
+end
+
+//Multicycle control unit
+
 //Main FSM Decoder
 logic [1:0] ALUop
 always_ff @(negedge clk) : begin
@@ -100,19 +115,35 @@ always_ff @(negedge clk) : begin
 end
 
 // ALU Decoder (CL)
-logic [2:0] ALU_control; 
+//logic [2:0] ALU_control; 
 always_comb : begin : ALU_decoder
-if( ~ALUop | ((ALUop[1] & ~ALUop[0]) & ~(op[5] & funct7[5]) & ~funct3)) : ALU_control = 000;
-if((~ALUop[1] & ALUop[0]) | ((ALUop[1] & ~ALUop[0]) & (op[5] & funct7[5]) & ~funct3)) : ALU_control = 001;
-if((ALUop[1] & ~ALUop[0]) & (~funct3[2] & funct3[1] & ~funct3[0])) : ALU_control = 101;
-if((ALUop[1] & ~ALUop[0]) & (funct3[2] & funct3[1] & ~funct3[0])) : ALU_cotrol = 011;
-if((ALUop[1] & ~ALUop[0]) & (funct3[2] & funct3[1] & ~funct3[0])) : ALU_cotrol = 010;
+case(ALUop)
+2'00: alu_control = ALU_ADD;
+2'01: alu_control = ALU_SUB;
+2'10: begin
+  case(funct3)
+  3'000: begin
+    case({op[5],funct7[5]})
+    2'00: alu_control = ALU_ADD;
+    2'01: alu_control = ALU_ADD;
+    2'10: alu_control = ALU_ADD;
+    2'11: alu_control = ALU_SUB;
+    endcase
+  end
+  3'010: alu_control = ALU_SLT;
+  3'110: alu_control = ALU_OR;
+  3'111: alu_control = ALU_AND;
+endcase
+end
+endcase
 end
 
 // Instr Decoder (CL)
 always_comb : begin : Instr_decoder
 if (~op[6:2] | (~op[6:5] & op[4] & ~op[3:2]) | (op[6:5] & ~op[4:3] & op[2])) : Immext
 end
+
+//Multicycle Core 
 
 // Read Address (CL)
 always_comb : begin : address_read
