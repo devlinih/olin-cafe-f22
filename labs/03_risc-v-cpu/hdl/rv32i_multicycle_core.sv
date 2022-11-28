@@ -211,7 +211,7 @@ end
 // Registers for multicycle state
 
 // Instruction Reg
-always_ff @(posedge clk) begin
+always_ff @(posedge clk) begin : instr_reg
    if (rst) begin
       /*AUTORESET*/
       // Beginning of autoreset for uninitialized flops
@@ -219,10 +219,12 @@ always_ff @(posedge clk) begin
       instr <= 32'h0;
       // End of automatics
    end 
-   if (ir_write) begin
+   else if (ir_write) begin
       PC_old <= PC;
       instr  <= mem_rd_data;
    end
 end
-   
+
+
+
 endmodule
