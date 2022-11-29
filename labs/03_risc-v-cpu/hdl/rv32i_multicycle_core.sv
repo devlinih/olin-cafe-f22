@@ -83,10 +83,10 @@ assign PC_next = result; // Map PC_next and result together
 
 // Signals from controller
 // enum logic {MEM_SRC_PC, MEM_SRC_RESULT} mem_src;
-enum logic {IMM_I_TYPE, IMM_B_TYPE, IMM_J_TYPE, IMM_S_TYPE, IMM_U_TYPE} imm_src;
-enum logic {ALUA_PC, ALUA_OLD_PC, ALUA_REG_FILE}            alu_src_a;
-enum logic {ALUB_REGFILE, ALUB_IMMEDIATE, ALUB_FOUR}        alu_src_b;
-enum logic {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT}          res_src;
+enum logic [2:0] {IMM_I_TYPE, IMM_B_TYPE, IMM_J_TYPE, IMM_S_TYPE, IMM_U_TYPE} imm_src;
+enum logic [1:0] {ALUA_PC, ALUA_OLD_PC, ALUA_REG_FILE}            alu_src_a;
+enum logic [1:0] {ALUB_REGFILE, ALUB_IMMEDIATE, ALUB_FOUR}        alu_src_b;
+enum logic [1:0] {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT}          res_src;
 enum logic {POINTER, RES}                                   adr_src;
 
 logic adr_src, mem_write, ir_write, reg_write;
@@ -218,14 +218,14 @@ end
 // Instr Decoder (CL)
 always_comb begin : instr_decoder
    case(op)
-     7'b0000011: imm_src = IMM_I_TYPE;
-     7'b0010011: imm_src = IMM_I_TYPE;
-     7'b1100111: imm_src = IMM_I_TYPE;
-     7'b0100011: imm_src = IMM_S_TYPE;
-     7'b1100011: imm_src = IMM_B_TYPE;
-     7'b1101111: imm_src = IMM_J_TYPE;
-     7'b0010111: imm_src = IMM_U_TYPE;
-     7'b0110111: imm_src = IMM_U_TYPE;
+     OP_LTYPE: imm_src = IMM_I_TYPE;
+     OP_ITYPE: imm_src = IMM_I_TYPE;
+     OP_JALR: imm_src = IMM_I_TYPE;
+     OP_STYPE: imm_src = IMM_S_TYPE;
+     OP_BTYPE: imm_src = IMM_B_TYPE;
+     OP_JAL: imm_src = IMM_J_TYPE;
+     OP_LUI: imm_src = IMM_U_TYPE;
+     OP_AUIPC: imm_src = IMM_U_TYPE;
    endcase
 end
 
