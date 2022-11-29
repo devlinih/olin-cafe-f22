@@ -138,48 +138,54 @@ always_ff @(negedge clk) begin
       alu_src_a <= ALUA_OLD_PC;
       alu_src_b <= ALUB_IMMEDIATE;
       alu_op <= 2'b00;
-      if((op == OP_LTYPE)|(op == OP_STYPE)): state <= S2_MEM_ADR;
-      if((op == OP_RTYPE)): state <= S6_R_TYPE;
-      if((op == OP_ITYPE)): stae <= S8_I_TYPE;
+      case(op)
+        OP_LTYPE: state <= S2_MEM_ADR;
+        OP_STYPE: state <= S2_MEM_ADR;
+        OP_RTYPE: state <= S6_R_TYPE;
+        OP_ITYPE: state <= S8_I_TYPE;
+      endcase
     end
     S2_MEM_ADR : begin
       alu_src_a <= ALUA_REG_FILE;
       alu_src_b <= ALUB_IMMEDIATE;
       alu_op <= 2'b00;
-      if((op == OP_LTYPE)): state <= S3_MEM_READ;
-      if((op == OP_STYPE)): state <= S5_MEM_WRITE;
+      case(op)
+        OP_LTYPE: state <= S3_MEM_READ;
+        OP_STYPE state <= S5_MEM_WRITE;
+      endcase
     end
     S3_MEM_READ : begin
       res_src <= RES_ALU_OUT;
       adr_src <= 1;
-      if(something) : state <= S4_MEMWB;
+      state <= S4_MEMWB;
     end
     S4_MEMWB : begin
       res_src <= RES_DATA;
       reg_write <= 1;
-      if(something): state <= S0_FETCH;
+      state <= S0_FETCH;
     end
     S5_MEM_WRITE : begin
       res_src <= RES_DATA;
       adr_src <= 1;
       mem_wr_ena <=1;
-      if(something): state <= S0_FETCH;
+      state <= S0_FETCH;
     end
     S6_R_TYPE : begin
       alu_src_a <= ALUA_REG_FILE;
       alu_src_b <= ALUB_REGFILE
       alu_op <= 2'b10;
-      if(something): state <= S7_ALUWB;
+      state <= S7_ALUWB;
     end
     S7_ALUWB : begin
       res_src <= RES_ALU_OUT;
       reg_write <= 1;
-      if(something): state <= S0_FETCH;
+      state <= S0_FETCH;
     end
     S8_I_TYPE : begin
       alu_src_a <= ALUA_REG_FILE;
       alu_src_b <= ALUB_IMMEDIATE;
       alu_op <= 2'b10;
+      state <= S7_ALUWB;
     end
     endcase
   end
