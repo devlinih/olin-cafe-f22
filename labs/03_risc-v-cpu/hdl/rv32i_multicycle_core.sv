@@ -22,7 +22,7 @@ output logic mem_wr_ena;
 
 // Program Counter
 output wire [31:0] PC;
-wire [31:0] PC_old;
+logic [31:0] PC_old;
 logic PC_ena;
 logic [31:0] PC_next; 
 
@@ -79,7 +79,7 @@ logic [31:0] result,
              data_a, write_data,
              alu_out;
 
-assign PC_next = result; // Map PC_next and result together
+always_comb PC_next = result; // Map PC_next and result together
 
 // Signals from controller
 // enum logic {MEM_SRC_PC, MEM_SRC_RESULT} mem_src;
@@ -89,7 +89,7 @@ enum logic [1:0] {ALUB_REGFILE, ALUB_IMMEDIATE, ALUB_FOUR}        alu_src_b;
 enum logic [1:0] {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT}          res_src;
 enum logic {POINTER, RES}                                   adr_src;
 
-logic adr_src, mem_write, ir_write, reg_write;
+logic mem_write, ir_write;
 
 // Signals used internally for controller
 logic       branch, PC_update;
@@ -130,8 +130,8 @@ always_ff @(negedge clk) begin
       alu_src_b <= ALUB_FOUR;
       alu_op <= 2'b00;
       res_src <= RES_ALU_RESULT;
-      pc_update <= 1;
-      if(something) : state <= S1_DECODE;
+      PC_update <= 1;
+      state <= S1_DECODE;
     end
     S1_DECODE : begin
       ir_write <= 0;
@@ -151,7 +151,7 @@ always_ff @(negedge clk) begin
       alu_op <= 2'b00;
       case(op)
         OP_LTYPE: state <= S3_MEM_READ;
-        OP_STYPE state <= S5_MEM_WRITE;
+        OP_STYPE: state <= S5_MEM_WRITE;
       endcase
     end
     S3_MEM_READ : begin
@@ -172,7 +172,7 @@ always_ff @(negedge clk) begin
     end
     S6_R_TYPE : begin
       alu_src_a <= ALUA_REG_FILE;
-      alu_src_b <= ALUB_REGFILE
+      alu_src_b <= ALUB_REGFILE;
       alu_op <= 2'b10;
       state <= S7_ALUWB;
     end
@@ -240,7 +240,7 @@ always_comb begin : address_read
 end
 
 // Immediate Extension
-always_comb begin : imm_ext
+always_comb begin : set_imm_ext
    case (imm_src)
      IMM_I_TYPE : imm_ext = {{20{instr[31]}}, instr[31:20]};
      IMM_S_TYPE : imm_ext = {{20{instr[31]}}, instr[31:25], instr[11:7]};
@@ -255,7 +255,7 @@ end
 always_comb begin : alu_a
    case (alu_src_a)
      ALUA_PC       : src_a = PC;
-     ALUA_PC_OLD   : src_a = PC_old;
+     ALUA_OLD_PC   : src_a = PC_old;
      ALUA_REG_FILE : src_a = data_a;
      default       : src_a = 0;
    endcase
@@ -272,7 +272,7 @@ always_comb begin : alu_b
 end
 
 // Results
-always_comb begin : result
+always_comb begin : calculate_result
    case (res_src)
      RES_DATA       : result = data;
      RES_ALU_RESULT : result = alu_result;
