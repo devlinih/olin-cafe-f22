@@ -60,7 +60,7 @@ logic [31:0] PC_buffer [$:INFINITE_LOOP_LENGTH];
 logic all_equal = 1'b1;
 always @(posedge sysclk) begin
   if(~UUT.CORE.rst) begin
-    if(UUT.CORE.state == UUT.CORE.S_FETCH) begin
+    if(UUT.CORE.state == UUT.CORE.S0_FETCH) begin
         PC_buffer.push_back(UUT.CORE.PC_REGISTER.q);
         if(PC_buffer.size() == INFINITE_LOOP_LENGTH) begin
           all_equal = 1'b1;
