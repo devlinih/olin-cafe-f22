@@ -121,79 +121,79 @@ end
 enum logic [3:0] {S0_FETCH, S1_DECODE, S2_MEM_ADR, S3_MEM_READ, S4_MEMWB, S5_MEM_WRITE, S6_R_TYPE, S7_ALUWB, S8_I_TYPE} state;
 //logic [1:0] ALUop;
 always_ff @(negedge clk) begin
-  if(rst) begin
-  state <= S0_FETCH;
-  end else begin
-    case(state)
-    S0_FETCH : begin
-      PC_ena <= 0;
-      adr_src <= 0;
-      mem_wr_ena <= 0;
-      ir_write <= 1;
-      reg_write <= 0;
-      alu_src_a <= ALUA_PC;
-      alu_src_b <= ALUB_FOUR;
-      alu_op <= 2'b00;
-      res_src <= RES_ALU_RESULT;
-      PC_update <= 1;
-      state <= S1_DECODE;
-    end
-    S1_DECODE : begin
-      ir_write <= 0;
-      alu_src_a <= ALUA_OLD_PC;
-      alu_src_b <= ALUB_IMMEDIATE;
-      alu_op <= 2'b00;
-      case(op)
-        OP_LTYPE: state <= S2_MEM_ADR;
-        OP_STYPE: state <= S2_MEM_ADR;
-        OP_RTYPE: state <= S6_R_TYPE;
-        OP_ITYPE: state <= S8_I_TYPE;
+   if(rst) begin
+      state <= S0_FETCH;
+   end else begin
+      case(state)
+        S0_FETCH : begin
+           PC_ena <= 0;
+           adr_src <= 0;
+           mem_wr_ena <= 0;
+           ir_write <= 1;
+           reg_write <= 0;
+           alu_src_a <= ALUA_PC;
+           alu_src_b <= ALUB_FOUR;
+           alu_op <= 2'b00;
+           res_src <= RES_ALU_RESULT;
+           PC_update <= 1;
+           state <= S1_DECODE;
+        end
+        S1_DECODE : begin
+           ir_write <= 0;
+           alu_src_a <= ALUA_OLD_PC;
+           alu_src_b <= ALUB_IMMEDIATE;
+           alu_op <= 2'b00;
+           case(op)
+             OP_LTYPE: state <= S2_MEM_ADR;
+             OP_STYPE: state <= S2_MEM_ADR;
+             OP_RTYPE: state <= S6_R_TYPE;
+             OP_ITYPE: state <= S8_I_TYPE;
+           endcase
+        end
+        S2_MEM_ADR : begin
+           alu_src_a <= ALUA_REG_FILE;
+           alu_src_b <= ALUB_IMMEDIATE;
+           alu_op <= 2'b00;
+           case(op)
+             OP_LTYPE: state <= S3_MEM_READ;
+             OP_STYPE: state <= S5_MEM_WRITE;
+           endcase
+        end
+        S3_MEM_READ : begin
+           res_src <= RES_ALU_OUT;
+           adr_src <= 1;
+           state <= S4_MEMWB;
+        end
+        S4_MEMWB : begin
+           res_src <= RES_DATA;
+           reg_write <= 1;
+           state <= S0_FETCH;
+        end
+        S5_MEM_WRITE : begin
+           res_src <= RES_DATA;
+           adr_src <= 1;
+           mem_wr_ena <=1;
+           state <= S0_FETCH;
+        end
+        S6_R_TYPE : begin
+           alu_src_a <= ALUA_REG_FILE;
+           alu_src_b <= ALUB_REGFILE;
+           alu_op <= 2'b10;
+           state <= S7_ALUWB;
+        end
+        S7_ALUWB : begin
+           res_src <= RES_ALU_OUT;
+           reg_write <= 1;
+           state <= S0_FETCH;
+        end
+        S8_I_TYPE : begin
+           alu_src_a <= ALUA_REG_FILE;
+           alu_src_b <= ALUB_IMMEDIATE;
+           alu_op <= 2'b10;
+           state <= S7_ALUWB;
+        end
       endcase
-    end
-    S2_MEM_ADR : begin
-      alu_src_a <= ALUA_REG_FILE;
-      alu_src_b <= ALUB_IMMEDIATE;
-      alu_op <= 2'b00;
-      case(op)
-        OP_LTYPE: state <= S3_MEM_READ;
-        OP_STYPE: state <= S5_MEM_WRITE;
-      endcase
-    end
-    S3_MEM_READ : begin
-      res_src <= RES_ALU_OUT;
-      adr_src <= 1;
-      state <= S4_MEMWB;
-    end
-    S4_MEMWB : begin
-      res_src <= RES_DATA;
-      reg_write <= 1;
-      state <= S0_FETCH;
-    end
-    S5_MEM_WRITE : begin
-      res_src <= RES_DATA;
-      adr_src <= 1;
-      mem_wr_ena <=1;
-      state <= S0_FETCH;
-    end
-    S6_R_TYPE : begin
-      alu_src_a <= ALUA_REG_FILE;
-      alu_src_b <= ALUB_REGFILE;
-      alu_op <= 2'b10;
-      state <= S7_ALUWB;
-    end
-    S7_ALUWB : begin
-      res_src <= RES_ALU_OUT;
-      reg_write <= 1;
-      state <= S0_FETCH;
-    end
-    S8_I_TYPE : begin
-      alu_src_a <= ALUA_REG_FILE;
-      alu_src_b <= ALUB_IMMEDIATE;
-      alu_op <= 2'b10;
-      state <= S7_ALUWB;
-    end
-    endcase
-  end
+   end
 end
 
 // ALU Decoder (CL)
