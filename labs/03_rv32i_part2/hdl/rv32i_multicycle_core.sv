@@ -127,10 +127,16 @@ enum logic [3:0] {S0_FETCH     = 4'b0000,
                   S5_MEM_WRITE = 4'b1010,
                   S6_R_TYPE    = 4'b0011,
                   S7_ALUWB     = 4'b1000,
-                  S8_I_TYPE    = 4'b0100} state;
+                  S8_I_TYPE    = 4'b0100,
+                  S9_JAL       = 4'b0101,
+                  S10_BRANCH   = 4'B0111,
+                  S11_JALR     = 4'b0110
+                  } state;
 
+logic branch_logic;
 always_comb begin: pc_ena_logic
-   PC_ena = (zero & branch) | PC_update;
+   //PC_ena = (zero & branch) | PC_update;
+   PC_ena = branch | PC_update;
 end
 
 always_ff @(negedge clk) begin
@@ -161,7 +167,9 @@ always_ff @(negedge clk) begin
              OP_STYPE: state <= S2_MEM_ADR;
              OP_RTYPE: state <= S6_R_TYPE;
              OP_ITYPE: state <= S8_I_TYPE;
-             OP_BTYPE: branch <= 1;
+             OP_JAL: state <= S9_JAL;
+             OP_JALR: state <= S11_JALR;
+             OP_BTYPE: state <= S10_BRANCH;
            endcase
         end
         S2_MEM_ADR : begin
@@ -206,6 +214,18 @@ always_ff @(negedge clk) begin
            alu_op <= 2'b10;
            state <= S7_ALUWB;
         end
+        S10_BRANCH : begin
+           //branch <= (zero & ~funct3[0]) | (~zero & funct3[0]);
+           case(funct3)
+             FUNCT3_BEQ: branch <= zero & ~funct3[0];
+             FUNCT3_BNE: branch <= ~zero & funct3[0];
+           endcase
+           alu_src_a <= ALUA_REG_FILE;
+           alu_src_b <= ALUB_REGFILE;
+           alu_op <= 2'b01;
+           res_src <= alu_out;
+           state <= S0_FETCH;
+        end
       endcase
    end
 end
@@ -218,7 +238,7 @@ always_comb begin : ALU_decoder
      2'b01: alu_control = ALU_SUB;
      2'b10: begin
        case(funct3)
-         3'b000: begin
+         FUNCT3_ADD: begin
            case({op[5],funct7[5]})
              2'b00: alu_control = ALU_ADD;
              2'b01: alu_control = ALU_ADD;
@@ -226,9 +246,18 @@ always_comb begin : ALU_decoder
              2'b11: alu_control = ALU_SUB;
            endcase
          end
-         3'b010: alu_control = ALU_SLT;
-         3'b110: alu_control = ALU_OR;
-         3'b111: alu_control = ALU_AND;
+         FUNCT3_SLL: alu_control = ALU_SLL;
+         FUNCT3_SLT: alu_control = ALU_SLT;
+         FUNCT3_SLTU: alu_control = ALU_SLTU;
+         FUNCT3_XOR: alu_control = ALU_XOR;
+         FUNCT3_SHIFT_RIGHT: begin
+           case(funct7[5])
+           0: alu_control = ALU_SRL;
+           1: alu_control = ALU_SRA;
+           endcase
+         end
+         FUNCT3_OR: alu_control = ALU_OR;
+         FUNCT3_AND: alu_control = ALU_AND;
        endcase
      end
    endcase
