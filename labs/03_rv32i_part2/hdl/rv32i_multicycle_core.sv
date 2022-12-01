@@ -51,6 +51,7 @@ logic reg_write;
 logic [4:0] rd, rs1, rs2;
 logic [31:0] rfile_wr_data;
 wire [31:0] reg_data1, reg_data2;
+always_comb rfile_wr_data = result;
 register_file REGISTER_FILE(
   .clk(clk),
   .wr_ena(reg_write), .wr_addr(rd), .wr_data(rfile_wr_data),
