@@ -127,14 +127,17 @@ enum logic [3:0] {S0_FETCH     = 4'b0000,
                   S6_R_TYPE    = 4'b0011,
                   S7_ALUWB     = 4'b1000,
                   S8_I_TYPE    = 4'b0100} state;
-//logic [1:0] ALUop;
+
+always_comb begin: pc_ena_logic
+   PC_ena = (zero & branch) | PC_update;
+end
+
 always_ff @(negedge clk) begin
    if(rst) begin
       state <= S0_FETCH;
    end else begin
       case(state)
         S0_FETCH : begin
-           PC_ena <= 0;
            adr_src <= 0;
            mem_wr_ena <= 0;
            ir_write <= 1;
@@ -150,12 +153,14 @@ always_ff @(negedge clk) begin
            ir_write <= 0;
            alu_src_a <= ALUA_OLD_PC;
            alu_src_b <= ALUB_IMMEDIATE;
+           PC_update <= 0;
            alu_op <= 2'b00;
            case(op)
              OP_LTYPE: state <= S2_MEM_ADR;
              OP_STYPE: state <= S2_MEM_ADR;
              OP_RTYPE: state <= S6_R_TYPE;
              OP_ITYPE: state <= S8_I_TYPE;
+             OP_BTYPE: branch <= 1;
            endcase
         end
         S2_MEM_ADR : begin
