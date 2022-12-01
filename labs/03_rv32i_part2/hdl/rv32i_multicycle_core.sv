@@ -118,7 +118,15 @@ end
 //Multicycle control unit
 
 //Main FSM Decoder
-enum logic [3:0] {S0_FETCH, S1_DECODE, S2_MEM_ADR, S3_MEM_READ, S4_MEMWB, S5_MEM_WRITE, S6_R_TYPE, S7_ALUWB, S8_I_TYPE} state;
+enum logic [3:0] {S0_FETCH     = 4'b0000,
+                  S1_DECODE    = 4'b0001,
+                  S2_MEM_ADR   = 4'b0010,
+                  S3_MEM_READ  = 4'b1001,
+                  S4_MEMWB     = 4'b1100,
+                  S5_MEM_WRITE = 4'b1010,
+                  S6_R_TYPE    = 4'b0011,
+                  S7_ALUWB     = 4'b1000,
+                  S8_I_TYPE    = 4'b0100} state;
 //logic [1:0] ALUop;
 always_ff @(negedge clk) begin
    if(rst) begin
