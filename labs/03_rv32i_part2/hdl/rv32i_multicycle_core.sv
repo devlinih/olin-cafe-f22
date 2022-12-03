@@ -214,6 +214,14 @@ always_ff @(negedge clk) begin
            alu_op <= 2'b10;
            state <= S7_ALUWB;
         end
+        S9_JAL : begin
+           PC_update <= 1'b1;
+           alu_src_a <= ALUA_OLD_PC;
+           alu_src_b <= ALUB_FOUR;
+           alu_op    <= 2'b00;
+           res_src   <= RES_ALU_OUT;
+           state     <= S7_ALUWB;
+        end
         S10_BRANCH : begin
            //branch <= (zero & ~funct3[0]) | (~zero & funct3[0]);
            case(funct3)
