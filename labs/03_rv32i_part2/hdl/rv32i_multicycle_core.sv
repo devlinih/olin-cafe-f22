@@ -223,7 +223,7 @@ always_ff @(negedge clk) begin
            alu_src_a <= ALUA_REG_FILE;
            alu_src_b <= ALUB_REGFILE;
            alu_op <= 2'b01;
-           res_src <= alu_out;
+           res_src <= RES_ALU_OUT;
            state <= S0_FETCH;
         end
       endcase
