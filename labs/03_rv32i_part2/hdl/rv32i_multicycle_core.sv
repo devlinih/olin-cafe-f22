@@ -301,6 +301,9 @@ end
 
 //Multicycle Core
 
+// Hardware write_data to mem_wr_data
+always_comb mem_wr_data = write_data;
+
 // Read Address (CL)
 always_comb begin : address_read
    case(adr_src)
