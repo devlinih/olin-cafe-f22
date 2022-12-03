@@ -207,6 +207,7 @@ always_ff @(negedge clk) begin
            res_src <= RES_ALU_OUT;
            reg_write <= 1;
            state <= S0_FETCH;
+           PC_update <= 1'b0; // Set to zero after JAL
         end
         S8_I_TYPE : begin
            alu_src_a <= ALUA_REG_FILE;
@@ -215,6 +216,11 @@ always_ff @(negedge clk) begin
            state <= S7_ALUWB;
         end
         S9_JAL : begin
+           // Calculate PC_old+4, put that in result reg.
+           // Value currently in result reg becomes PC
+              // From decode this is PC+imm_ext
+              // From jalr this is RS1+imm_ext
+           // Goes to writeback to put
            PC_update <= 1'b1;
            alu_src_a <= ALUA_OLD_PC;
            alu_src_b <= ALUB_FOUR;
@@ -233,6 +239,14 @@ always_ff @(negedge clk) begin
            alu_op <= 2'b01;
            res_src <= RES_ALU_OUT;
            state <= S0_FETCH;
+        end // case: S10_BRANCH
+        S11_JALR : begin
+           // Set RESULT_REG to RS1 + IMM, then go to JAL
+           PC_update <= 1'b0; // Being explicit that this is FALSE for JALR.
+           alu_src_a <= ALUA_REG_FILE;
+           alu_src_b <= ALUB_IMMEDIATE;
+           alu_op    <= 2'b00;
+           state     <= S9_JAL;
         end
       endcase
    end
