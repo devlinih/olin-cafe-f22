@@ -197,7 +197,7 @@ always_comb begin : alu_src_b_logic
      S2_MEM_ADR   : alu_src_b = ALUB_IMMEDIATE;
      S6_R_TYPE    : alu_src_b = ALUB_REG_FILE;
      S8_I_TYPE    : alu_src_b = ALUB_IMMEDIATE;
-     S9_JAL       : alu_src_b = ALUB_IMMEDIATE;
+     S9_JAL       : alu_src_b = ALUB_FOUR;
      S10_BRANCH   : alu_src_b = ALUB_REG_FILE;
      S11_JALR     : alu_src_b = ALUB_IMMEDIATE;
      default      : alu_src_b = ALUB_DC;
