@@ -90,12 +90,12 @@ always_comb PC_next = result; // Map PC_next and result together
 // Signals from controller
 // enum logic {MEM_SRC_PC, MEM_SRC_RESULT} mem_src;
 enum logic [2:0] {IMM_I_TYPE, IMM_B_TYPE, IMM_J_TYPE, IMM_S_TYPE, IMM_U_TYPE} imm_src;
-enum logic [1:0] {ALUA_PC, ALUA_PC_OLD, ALUA_REG_FILE}      alu_src_a;
-enum logic [1:0] {ALUB_REG_FILE, ALUB_IMMEDIATE, ALUB_FOUR} alu_src_b;
-enum logic [1:0] {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT}    res_src;
-enum logic {POINTER, RES}                                   adr_src;
+enum logic [1:0] {ALUA_PC, ALUA_PC_OLD, ALUA_REG_FILE, ALUA_DC}      alu_src_a;
+enum logic [1:0] {ALUB_REG_FILE, ALUB_IMMEDIATE, ALUB_FOUR, ALUB_DC} alu_src_b;
+enum logic [1:0] {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT, RES_DC}     res_src;
+enum logic {POINTER, RES}                                            adr_src;
 
-logic mem_write, ir_write;
+logic ir_write;
 
 // Signals used internally for controller
 logic       branch, PC_update;
@@ -103,8 +103,8 @@ logic [1:0] alu_op;
 
 // Instruction signals decomposed
 logic [24:0] imm_in;
-logic [6:0] funct7, op;
-logic [2:0] funct3;
+logic [6:0]  funct7, op;
+logic [2:0]  funct3;
 
 always_comb begin : instr_decomp
    rs1    = instr[19:15];
@@ -129,8 +129,9 @@ enum logic [3:0] {S0_FETCH     = 4'b0000,
                   S7_ALUWB     = 4'b1000,
                   S8_I_TYPE    = 4'b0100,
                   S9_JAL       = 4'b0101,
-                  S10_BRANCH   = 4'B0111,
-                  S11_JALR     = 4'b0110
+                  S10_BRANCH   = 4'b0111,
+                  S11_JALR     = 4'b0110,
+                  S15_ERROR    = 4'b1111
                   } state;
 
 always_comb begin: pc_ena_logic
@@ -138,115 +139,148 @@ always_comb begin: pc_ena_logic
    PC_ena = branch | PC_update;
 end
 
+// CL for each control signal
+always_comb begin : adr_src_logic
+   case(state)
+     S0_FETCH     : adr_src = POINTER;
+     S3_MEM_READ  : adr_src = RES;
+     S5_MEM_WRITE : adr_src = RES;
+     default      : adr_src = POINTER;
+   endcase
+end
+
+always_comb begin : mem_wr_ena_logic
+   case(state)
+     S5_MEM_WRITE : mem_wr_ena = 1;
+     default      : mem_wr_ena = 0;
+   endcase
+end
+
+always_comb begin : ir_write_logic
+   case(state)
+     S0_FETCH : ir_write = 1;
+     default  : ir_write = 0;
+   endcase
+end
+
+always_comb begin : reg_write_logic
+   case(state)
+     S4_MEMWB     : reg_write = 1;
+     S7_ALUWB     : reg_write = 1;
+     default      : reg_write = 0;
+   endcase
+end
+
+always_comb begin : alu_src_a_logic
+   case(state)
+     S0_FETCH     : alu_src_a = ALUA_PC;
+     S1_DECODE    : alu_src_a = ALUA_PC_OLD;
+     S2_MEM_ADR   : alu_src_a = ALUA_REG_FILE;
+     S6_R_TYPE    : alu_src_a = ALUA_REG_FILE;
+     S8_I_TYPE    : alu_src_a = ALUA_REG_FILE;
+     S9_JAL       : alu_src_a = ALUA_PC_OLD;
+     S10_BRANCH   : alu_src_a = ALUA_REG_FILE;
+     default      : alu_src_a = ALUA_DC;
+   endcase
+end
+
+always_comb begin : alu_src_b_logic
+   case(state)
+     S0_FETCH     : alu_src_b = ALUB_FOUR;
+     S1_DECODE    : alu_src_b = ALUB_IMMEDIATE;
+     S2_MEM_ADR   : alu_src_b = ALUB_IMMEDIATE;
+     S6_R_TYPE    : alu_src_b = ALUB_REG_FILE;
+     S8_I_TYPE    : alu_src_b = ALUB_IMMEDIATE;
+     S9_JAL       : alu_src_b = ALUB_IMMEDIATE;
+     S10_BRANCH   : alu_src_b = ALUB_REG_FILE;
+     default      : alu_src_b = ALUB_DC;
+   endcase
+end
+
+always_comb begin : alu_op_logic
+   case(state)
+     S0_FETCH     : alu_op = 2'b00;
+     S1_DECODE    : alu_op = 2'b00;
+     S2_MEM_ADR   : alu_op = 2'b00;
+     S6_R_TYPE    : alu_op = 2'b10;
+     S8_I_TYPE    : alu_op = 2'b10;
+     S9_JAL       : alu_op = 2'b00;
+     S10_BRANCH   : alu_op = 2'b01;
+     default      : alu_op = 2'b00; // Don't Care
+   endcase
+end
+
+// res_src    = RES_ALU_RESULT;
+always_comb begin : res_src_logic
+   case(state)
+     S0_FETCH     : res_src = RES_ALU_RESULT;
+     S3_MEM_READ  : res_src = RES_ALU_OUT;
+     S4_MEMWB     : res_src = RES_DATA;
+     S5_MEM_WRITE : res_src = RES_ALU_OUT;
+     S7_ALUWB     : res_src = RES_ALU_OUT;
+     S9_JAL       : res_src = RES_ALU_OUT;
+     S10_BRANCH   : res_src = RES_ALU_OUT;
+     default      : res_src = RES_DC; // Don't care
+   endcase
+end
+
+always_comb begin: PC_update_logic
+   case(state)
+     S0_FETCH     : PC_update = 1;
+     S9_JAL       : PC_update = 1;
+     default      : PC_update = 0;
+   endcase
+end
+
+always_comb begin: branch_logic
+   case(state)
+     S10_BRANCH : case(funct3)
+                    FUNCT3_BEQ : branch =  zero & ~funct3[0];
+                    FUNCT3_BNE : branch = ~zero &  funct3[0];
+                    default    : branch = 0;
+                  endcase
+     default    : branch = 0;
+   endcase
+end
+
+// Next state logic
 always_ff @(negedge clk) begin
    if(rst) begin
       state <= S0_FETCH;
    end else begin
       case(state)
-        S0_FETCH : begin
-           adr_src <= 0;
-           mem_wr_ena <= 0;
-           ir_write <= 1;
-           reg_write <= 0;
-           alu_src_a <= ALUA_PC;
-           alu_src_b <= ALUB_FOUR;
-           alu_op <= 2'b00;
-           res_src <= RES_ALU_RESULT;
-           PC_update <= 1;
-           state <= S1_DECODE;
-        end
-        S1_DECODE : begin
-           ir_write <= 0;
-           alu_src_a <= ALUA_PC_OLD;
-           alu_src_b <= ALUB_IMMEDIATE;
-           PC_update <= 0;
-           alu_op <= 2'b00;
-           case(op)
-             OP_LTYPE: state <= S2_MEM_ADR;
-             OP_STYPE: state <= S2_MEM_ADR;
-             OP_RTYPE: state <= S6_R_TYPE;
-             OP_ITYPE: state <= S8_I_TYPE;
-             OP_JAL: state <= S9_JAL;
-             OP_JALR: state <= S11_JALR;
-             OP_BTYPE: state <= S10_BRANCH;
-           endcase
-        end
-        S2_MEM_ADR : begin
-           alu_src_a <= ALUA_REG_FILE;
-           alu_src_b <= ALUB_IMMEDIATE;
-           alu_op <= 2'b00;
-           case(op)
-             OP_LTYPE: state <= S3_MEM_READ;
-             OP_STYPE: state <= S5_MEM_WRITE;
-           endcase
-        end
-        S3_MEM_READ : begin
-           res_src <= RES_ALU_OUT;
-           adr_src <= 1;
-           state <= S4_MEMWB;
-        end
-        S4_MEMWB : begin
-           res_src <= RES_DATA;
-           reg_write <= 1;
-           state <= S0_FETCH;
-        end
-        S5_MEM_WRITE : begin
-           res_src <= RES_DATA;
-           adr_src <= 1;
-           mem_wr_ena <=1;
-           state <= S0_FETCH;
-        end
-        S6_R_TYPE : begin
-           alu_src_a <= ALUA_REG_FILE;
-           alu_src_b <= ALUB_REG_FILE;
-           alu_op <= 2'b10;
-           state <= S7_ALUWB;
-        end
-        S7_ALUWB : begin
-           res_src <= RES_ALU_OUT;
-           reg_write <= 1;
-           state <= S0_FETCH;
-           PC_update <= 1'b0; // Set to zero after JAL
-        end
-        S8_I_TYPE : begin
-           alu_src_a <= ALUA_REG_FILE;
-           alu_src_b <= ALUB_IMMEDIATE;
-           alu_op <= 2'b10;
-           state <= S7_ALUWB;
-        end
-        S9_JAL : begin
-           // Calculate PC_old+4, put that in result reg.
-           // Value currently in result reg becomes PC
-              // From decode this is PC+imm_ext
-              // From jalr this is RS1+imm_ext
-           // Goes to writeback to put
-           PC_update <= 1'b1;
-           alu_src_a <= ALUA_PC_OLD;
-           alu_src_b <= ALUB_FOUR;
-           alu_op    <= 2'b00;
-           res_src   <= RES_ALU_OUT;
-           state     <= S7_ALUWB;
-        end
-        S10_BRANCH : begin
-           //branch <= (zero & ~funct3[0]) | (~zero & funct3[0]);
-           case(funct3)
-             FUNCT3_BEQ: branch <= zero & ~funct3[0];
-             FUNCT3_BNE: branch <= ~zero & funct3[0];
-           endcase
-           alu_src_a <= ALUA_REG_FILE;
-           alu_src_b <= ALUB_REG_FILE;
-           alu_op <= 2'b01;
-           res_src <= RES_ALU_OUT;
-           state <= S0_FETCH;
-        end // case: S10_BRANCH
-        S11_JALR : begin
-           // Set RESULT_REG to RS1 + IMM, then go to JAL
-           PC_update <= 1'b0; // Being explicit that this is FALSE for JALR.
-           alu_src_a <= ALUA_REG_FILE;
-           alu_src_b <= ALUB_IMMEDIATE;
-           alu_op    <= 2'b00;
-           state     <= S9_JAL;
-        end
+        S0_FETCH     : state <= S1_DECODE;
+        S1_DECODE    : case(op)
+                         OP_LTYPE : state <= S2_MEM_ADR;
+                         OP_STYPE : state <= S2_MEM_ADR;
+                         OP_RTYPE : state <= S6_R_TYPE;
+                         OP_ITYPE : state <= S8_I_TYPE;
+                         OP_JAL   : state <= S9_JAL;
+                         OP_JALR  : state <= S11_JALR;
+                         OP_BTYPE : state <= S10_BRANCH;
+                         default  : state <= S15_ERROR;
+                       endcase
+        S2_MEM_ADR   : case(op)
+                         OP_LTYPE : state <= S3_MEM_READ;
+                         OP_STYPE : state <= S5_MEM_WRITE;
+                         default  : state <= S15_ERROR;
+                       endcase
+        S3_MEM_READ  : state <= S4_MEMWB;
+        S4_MEMWB     : state <= S0_FETCH;
+        S5_MEM_WRITE : state <= S0_FETCH;
+        S6_R_TYPE    : state <= S7_ALUWB;
+        S7_ALUWB     : state <= S0_FETCH;
+        S8_I_TYPE    : state <= S7_ALUWB;
+        S9_JAL       : state<= S7_ALUWB;
+        S10_BRANCH   : state <= S0_FETCH;
+        // S11_JALR : begin
+        //    // Set RESULT_REG to RS1 + IMM, then go to JAL
+        //    PC_update <= 1'b0; // Being explicit that this is FALSE for JALR.
+        //    alu_src_a <= ALUA_REG_FILE;
+        //    alu_src_b <= ALUB_IMMEDIATE;
+        //    alu_op    <= 2'b00;
+        //    state     <= S9_JAL;
+        // end
       endcase
    end
 end
@@ -329,6 +363,7 @@ always_comb begin : alu_a
      ALUA_PC       : src_a = PC;
      ALUA_PC_OLD   : src_a = PC_old;
      ALUA_REG_FILE : src_a = data_a;
+     ALUA_DC       : src_a = 0;
      default       : src_a = 0;
    endcase
 end
@@ -339,7 +374,8 @@ always_comb begin : alu_b
      ALUB_REG_FILE  : src_b = write_data;
      ALUB_IMMEDIATE : src_b = imm_ext;
      ALUB_FOUR      : src_b = 4;
-     default        : src_b = 4;
+     ALUB_DC        : src_b = 0;
+     default        : src_b = 0;
    endcase
 end
 
