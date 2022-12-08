@@ -212,7 +212,7 @@ always_comb begin : alu_op_logic
      S6_R_TYPE    : alu_op = 2'b10;
      S8_I_TYPE    : alu_op = 2'b10;
      S9_JAL       : alu_op = 2'b00;
-     S10_BRANCH   : alu_op = 2'b01;
+     S10_BRANCH   : alu_op = 2'b11; // Special for just branching
      S11_JALR     : alu_op = 2'b00;
      default      : alu_op = 2'b00; // Don't Care
    endcase
@@ -243,9 +243,13 @@ end
 always_comb begin : branch_logic
    case(state)
      S10_BRANCH   : case(funct3)
-                      FUNCT3_BEQ : branch =  zero & ~funct3[0];
-                      FUNCT3_BNE : branch = ~zero &  funct3[0];
-                      default    : branch = 0;
+                      FUNCT3_BEQ  : branch =  equal;
+                      FUNCT3_BNE  : branch = ~equal;
+                      FUNCT3_BLT  : branch =  alu_result[0];
+                      FUNCT3_BGE  : branch = ~alu_result[0];
+                      FUNCT3_BLTU : branch =  alu_result[0];
+                      FUNCT3_BGEU : branch = ~alu_result[0];
+                      default     : branch = 0;
                     endcase
      default      : branch = 0;
    endcase
@@ -317,6 +321,17 @@ always_comb begin : ALU_decoder
           FUNCT3_OR   : alu_control = ALU_OR;
           FUNCT3_AND  : alu_control = ALU_AND;
        endcase
+     end
+     2'b11: begin // Branching
+        case(funct3)
+          FUNCT3_BEQ  : alu_control = ALU_SUB;
+          FUNCT3_BNE  : alu_control = ALU_SUB;
+          FUNCT3_BLT  : alu_control = ALU_SLT;
+          FUNCT3_BGE  : alu_control = ALU_SLT;
+          FUNCT3_BLTU : alu_control = ALU_SLTU;
+          FUNCT3_BGEU : alu_control = ALU_SLTU;
+          default     : alu_control = ALU_INVALID;
+        endcase
      end
      default: alu_control = ALU_INVALID; // Don't care
    endcase
