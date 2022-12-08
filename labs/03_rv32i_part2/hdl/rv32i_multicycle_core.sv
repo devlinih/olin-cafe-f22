@@ -158,8 +158,8 @@ end
 
 always_comb begin : ir_write_logic
    case(state)
-     S0_FETCH : ir_write = 1;
-     default  : ir_write = 0;
+     S0_FETCH     : ir_write = 1;
+     default      : ir_write = 0;
    endcase
 end
 
@@ -227,22 +227,22 @@ always_comb begin : res_src_logic
    endcase
 end
 
-always_comb begin: PC_update_logic
+always_comb begin : PC_update_logic
    case(state)
-     S0_FETCH : PC_update = 1;
-     S9_JAL   : PC_update = 1;
-     default  : PC_update = 0;
+     S0_FETCH     : PC_update = 1;
+     S9_JAL       : PC_update = 1;
+     default      : PC_update = 0;
    endcase
 end
 
-always_comb begin: branch_logic
+always_comb begin : branch_logic
    case(state)
-     S10_BRANCH : case(funct3)
-                    FUNCT3_BEQ : branch =  zero & ~funct3[0];
-                    FUNCT3_BNE : branch = ~zero &  funct3[0];
-                    default    : branch = 0;
-                  endcase
-     default    : branch = 0;
+     S10_BRANCH   : case(funct3)
+                      FUNCT3_BEQ : branch =  zero & ~funct3[0];
+                      FUNCT3_BNE : branch = ~zero &  funct3[0];
+                      default    : branch = 0;
+                    endcase
+     default      : branch = 0;
    endcase
 end
 
