@@ -180,6 +180,7 @@ always_comb begin : alu_src_a_logic
      S8_I_TYPE    : alu_src_a = ALUA_REG_FILE;
      S9_JAL       : alu_src_a = ALUA_PC_OLD;
      S10_BRANCH   : alu_src_a = ALUA_REG_FILE;
+     S11_JALR     : alu_src_a = ALUA_REG_FILE;
      default      : alu_src_a = ALUA_DC;
    endcase
 end
@@ -193,6 +194,7 @@ always_comb begin : alu_src_b_logic
      S8_I_TYPE    : alu_src_b = ALUB_IMMEDIATE;
      S9_JAL       : alu_src_b = ALUB_IMMEDIATE;
      S10_BRANCH   : alu_src_b = ALUB_REG_FILE;
+     S11_JALR     : alu_src_b = ALUB_IMMEDIATE;
      default      : alu_src_b = ALUB_DC;
    endcase
 end
@@ -206,6 +208,7 @@ always_comb begin : alu_op_logic
      S8_I_TYPE    : alu_op = 2'b10;
      S9_JAL       : alu_op = 2'b00;
      S10_BRANCH   : alu_op = 2'b01;
+     S11_JALR     : alu_op = 2'b00;
      default      : alu_op = 2'b00; // Don't Care
    endcase
 end
@@ -226,9 +229,9 @@ end
 
 always_comb begin: PC_update_logic
    case(state)
-     S0_FETCH     : PC_update = 1;
-     S9_JAL       : PC_update = 1;
-     default      : PC_update = 0;
+     S0_FETCH : PC_update = 1;
+     S9_JAL   : PC_update = 1;
+     default  : PC_update = 0;
    endcase
 end
 
@@ -271,16 +274,9 @@ always_ff @(negedge clk) begin
         S6_R_TYPE    : state <= S7_ALUWB;
         S7_ALUWB     : state <= S0_FETCH;
         S8_I_TYPE    : state <= S7_ALUWB;
-        S9_JAL       : state<= S7_ALUWB;
+        S9_JAL       : state <= S7_ALUWB;
         S10_BRANCH   : state <= S0_FETCH;
-        // S11_JALR : begin
-        //    // Set RESULT_REG to RS1 + IMM, then go to JAL
-        //    PC_update <= 1'b0; // Being explicit that this is FALSE for JALR.
-        //    alu_src_a <= ALUA_REG_FILE;
-        //    alu_src_b <= ALUB_IMMEDIATE;
-        //    alu_op    <= 2'b00;
-        //    state     <= S9_JAL;
-        // end
+        S11_JALR     : state <= S9_JAL;
       endcase
    end
 end
