@@ -90,9 +90,9 @@ always_comb PC_next = result; // Map PC_next and result together
 // Signals from controller
 // enum logic {MEM_SRC_PC, MEM_SRC_RESULT} mem_src;
 enum logic [2:0] {IMM_I_TYPE, IMM_B_TYPE, IMM_J_TYPE, IMM_S_TYPE, IMM_U_TYPE} imm_src;
-enum logic [1:0] {ALUA_PC, ALUA_OLD_PC, ALUA_REG_FILE}            alu_src_a;
-enum logic [1:0] {ALUB_REGFILE, ALUB_IMMEDIATE, ALUB_FOUR}        alu_src_b;
-enum logic [1:0] {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT}          res_src;
+enum logic [1:0] {ALUA_PC, ALUA_PC_OLD, ALUA_REG_FILE}      alu_src_a;
+enum logic [1:0] {ALUB_REG_FILE, ALUB_IMMEDIATE, ALUB_FOUR} alu_src_b;
+enum logic [1:0] {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT}    res_src;
 enum logic {POINTER, RES}                                   adr_src;
 
 logic mem_write, ir_write;
@@ -107,13 +107,13 @@ logic [6:0] funct7, op;
 logic [2:0] funct3;
 
 always_comb begin : instr_decomp
-rs1 = instr[19:15];
-rs2 = instr[24:20];
-rd = instr[11:7];
-imm_in = instr[31:7];
-funct7 = instr[31:25];
-funct3 = instr[14:12];
-op = instr[6:0];
+   rs1    = instr[19:15];
+   rs2    = instr[24:20];
+   rd     = instr[11:7];
+   imm_in = instr[31:7];
+   funct7 = instr[31:25];
+   funct3 = instr[14:12];
+   op     = instr[6:0];
 end
 
 //Multicycle control unit
@@ -133,7 +133,6 @@ enum logic [3:0] {S0_FETCH     = 4'b0000,
                   S11_JALR     = 4'b0110
                   } state;
 
-logic branch_logic;
 always_comb begin: pc_ena_logic
    //PC_ena = (zero & branch) | PC_update;
    PC_ena = branch | PC_update;
@@ -158,7 +157,7 @@ always_ff @(negedge clk) begin
         end
         S1_DECODE : begin
            ir_write <= 0;
-           alu_src_a <= ALUA_OLD_PC;
+           alu_src_a <= ALUA_PC_OLD;
            alu_src_b <= ALUB_IMMEDIATE;
            PC_update <= 0;
            alu_op <= 2'b00;
@@ -199,7 +198,7 @@ always_ff @(negedge clk) begin
         end
         S6_R_TYPE : begin
            alu_src_a <= ALUA_REG_FILE;
-           alu_src_b <= ALUB_REGFILE;
+           alu_src_b <= ALUB_REG_FILE;
            alu_op <= 2'b10;
            state <= S7_ALUWB;
         end
@@ -222,7 +221,7 @@ always_ff @(negedge clk) begin
               // From jalr this is RS1+imm_ext
            // Goes to writeback to put
            PC_update <= 1'b1;
-           alu_src_a <= ALUA_OLD_PC;
+           alu_src_a <= ALUA_PC_OLD;
            alu_src_b <= ALUB_FOUR;
            alu_op    <= 2'b00;
            res_src   <= RES_ALU_OUT;
@@ -235,7 +234,7 @@ always_ff @(negedge clk) begin
              FUNCT3_BNE: branch <= ~zero & funct3[0];
            endcase
            alu_src_a <= ALUA_REG_FILE;
-           alu_src_b <= ALUB_REGFILE;
+           alu_src_b <= ALUB_REG_FILE;
            alu_op <= 2'b01;
            res_src <= RES_ALU_OUT;
            state <= S0_FETCH;
@@ -328,7 +327,7 @@ end
 always_comb begin : alu_a
    case (alu_src_a)
      ALUA_PC       : src_a = PC;
-     ALUA_OLD_PC   : src_a = PC_old;
+     ALUA_PC_OLD   : src_a = PC_old;
      ALUA_REG_FILE : src_a = data_a;
      default       : src_a = 0;
    endcase
@@ -337,7 +336,7 @@ end
 // ALU B
 always_comb begin : alu_b
    case (alu_src_b)
-     ALUB_REGFILE   : src_b = write_data;
+     ALUB_REG_FILE  : src_b = write_data;
      ALUB_IMMEDIATE : src_b = imm_ext;
      ALUB_FOUR      : src_b = 4;
      default        : src_b = 4;
