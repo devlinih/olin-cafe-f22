@@ -89,7 +89,12 @@ always_comb PC_next = result; // Map PC_next and result together
 
 // Signals from controller
 // enum logic {MEM_SRC_PC, MEM_SRC_RESULT} mem_src;
-enum logic [2:0] {IMM_I_TYPE, IMM_B_TYPE, IMM_J_TYPE, IMM_S_TYPE, IMM_U_TYPE} imm_src;
+enum logic [2:0] {IMM_I_TYPE,
+                  IMM_B_TYPE,
+                  IMM_J_TYPE,
+                  IMM_S_TYPE,
+                  IMM_U_TYPE,
+                  IMM_INVALID} imm_src;
 enum logic [1:0] {ALUA_PC, ALUA_PC_OLD, ALUA_REG_FILE, ALUA_DC}      alu_src_a;
 enum logic [1:0] {ALUB_REG_FILE, ALUB_IMMEDIATE, ALUB_FOUR, ALUB_DC} alu_src_b;
 enum logic [1:0] {RES_DATA, RES_ALU_RESULT, RES_ALU_OUT, RES_DC}     res_src;
@@ -277,6 +282,8 @@ always_ff @(negedge clk) begin
         S9_JAL       : state <= S7_ALUWB;
         S10_BRANCH   : state <= S0_FETCH;
         S11_JALR     : state <= S9_JAL;
+        S15_ERROR    : state <= S15_ERROR;
+        default      : state <= S15_ERROR;
       endcase
    end
 end
@@ -288,43 +295,45 @@ always_comb begin : ALU_decoder
      2'b00: alu_control = ALU_ADD;
      2'b01: alu_control = ALU_SUB;
      2'b10: begin
-       case(funct3)
-         FUNCT3_ADD: begin
-           case({op[5],funct7[5]})
-             2'b00: alu_control = ALU_ADD;
-             2'b01: alu_control = ALU_ADD;
-             2'b10: alu_control = ALU_ADD;
-             2'b11: alu_control = ALU_SUB;
-           endcase
-         end
-         FUNCT3_SLL: alu_control = ALU_SLL;
-         FUNCT3_SLT: alu_control = ALU_SLT;
-         FUNCT3_SLTU: alu_control = ALU_SLTU;
-         FUNCT3_XOR: alu_control = ALU_XOR;
-         FUNCT3_SHIFT_RIGHT: begin
-           case(funct7[5])
-           0: alu_control = ALU_SRL;
-           1: alu_control = ALU_SRA;
-           endcase
-         end
-         FUNCT3_OR: alu_control = ALU_OR;
-         FUNCT3_AND: alu_control = ALU_AND;
+        case(funct3)
+          FUNCT3_ADD : begin
+             case({op[5],funct7[5]})
+               2'b00  : alu_control = ALU_ADD;
+               2'b01  : alu_control = ALU_ADD;
+               2'b10  : alu_control = ALU_ADD;
+               2'b11  : alu_control = ALU_SUB;
+             endcase
+          end
+          FUNCT3_SLL  : alu_control = ALU_SLL;
+          FUNCT3_SLT  : alu_control = ALU_SLT;
+          FUNCT3_SLTU : alu_control = ALU_SLTU;
+          FUNCT3_XOR  : alu_control = ALU_XOR;
+          FUNCT3_SHIFT_RIGHT : begin
+             case(funct7[5])
+               0      : alu_control = ALU_SRL;
+               1      : alu_control = ALU_SRA;
+             endcase
+          end
+          FUNCT3_OR   : alu_control = ALU_OR;
+          FUNCT3_AND  : alu_control = ALU_AND;
        endcase
      end
+     default: alu_control = ALU_INVALID; // Don't care
    endcase
 end
 
 // Instr Decoder (CL)
 always_comb begin : instr_decoder
    case(op)
-     OP_LTYPE: imm_src = IMM_I_TYPE;
-     OP_ITYPE: imm_src = IMM_I_TYPE;
-     OP_JALR: imm_src = IMM_I_TYPE;
-     OP_STYPE: imm_src = IMM_S_TYPE;
-     OP_BTYPE: imm_src = IMM_B_TYPE;
-     OP_JAL: imm_src = IMM_J_TYPE;
-     OP_LUI: imm_src = IMM_U_TYPE;
-     OP_AUIPC: imm_src = IMM_U_TYPE;
+     OP_LTYPE : imm_src = IMM_I_TYPE;
+     OP_ITYPE : imm_src = IMM_I_TYPE;
+     OP_JALR  : imm_src = IMM_I_TYPE;
+     OP_STYPE : imm_src = IMM_S_TYPE;
+     OP_BTYPE : imm_src = IMM_B_TYPE;
+     OP_JAL   : imm_src = IMM_J_TYPE;
+     OP_LUI   : imm_src = IMM_U_TYPE;
+     OP_AUIPC : imm_src = IMM_U_TYPE;
+     default  : imm_src = IMM_INVALID;
    endcase
 end
 
@@ -349,6 +358,7 @@ always_comb begin : set_imm_ext
      IMM_B_TYPE : imm_ext = {{20{instr[31]}}, instr[7], instr[30:25], instr[11:8], 1'b0};
      IMM_J_TYPE : imm_ext = {{12{instr[31]}}, instr[19:12], instr[20], instr[30:21], 1'b0};
      IMM_U_TYPE : imm_ext = {{instr[31:12]}, 12'b0};
+     IMM_INVALID: imm_ext = 32'b0;
      default    : imm_ext = 32'b0;
    endcase
 end
